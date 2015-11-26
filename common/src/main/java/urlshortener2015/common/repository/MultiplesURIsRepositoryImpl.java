@@ -53,11 +53,11 @@ public class MultiplesURIsRepositoryImpl implements MultiplesURIsRepository {
 	@Override
 	public MultiplesURIs save(MultiplesURIs su) {
 		try {
-			jdbc.update("INSERT INTO MultiplesURIs VALUES (?,?)",
+			jdbc.update("INSERT INTO multiplesuris VALUES (?,?)",
 					su.getHash(), su.getTarget());
 		} catch (DuplicateKeyException e) {
 			log.debug("When insert for key " + su.getHash(), e);
-			return su;
+			return null;
 		} catch (Exception e) {
 			log.debug("When insert", e);
 			return null;

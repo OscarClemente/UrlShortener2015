@@ -29,6 +29,7 @@ import urlshortener2015.common.domain.ShortURL;
 import urlshortener2015.common.repository.ClickRepository;
 import urlshortener2015.common.repository.MultiplesURIsRepository;
 import urlshortener2015.common.repository.ShortURLRepository;
+import urlshortener2015.common.repository.UsuarioRepository;
 
 import com.google.common.hash.Hashing;
 
@@ -36,6 +37,7 @@ import com.google.common.hash.Hashing;
 public class UrlShortenerController {
 	private static final Logger log = LoggerFactory
 			.getLogger(UrlShortenerController.class);
+	
 	@Autowired
 	protected ShortURLRepository shortURLRepository;
 
@@ -45,28 +47,28 @@ public class UrlShortenerController {
 	@Autowired
 	protected MultiplesURIsRepository multiplesURIsRepository;
 	
-	/*@Autowired
-	protected UsuarioRepository usuarioRepository;*/
+	@Autowired
+	protected UsuarioRepository usuarioRepository;
 
-	public String id;
-
+	String name;
+	
 	@RequestMapping(value = "/{name:(?!link).*}", method = RequestMethod.GET)
 	public ResponseEntity<?> redirectTo(@PathVariable String name,
 			HttpServletRequest request) {
-		ShortURL l = shortURLRepository.findByKey(id);
+		ShortURL l = shortURLRepository.findByKey(this.name);
 		if (l != null) {
-			createAndSaveClick(extractIP(request));
+			createAndSaveClick(extractIP(request),this.name);
 			return createSuccessfulRedirectToResponse(l);
 		} else {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 	}
 
-	protected void createAndSaveClick(String ip) {
-		Click cl = new Click(null, id, new Date(System.currentTimeMillis()),
+	protected void createAndSaveClick(String ip, String name) {
+		Click cl = new Click(null, name, new Date(System.currentTimeMillis()),
 				null, null, null, ip, null);
 		cl=clickRepository.save(cl);
-		log.info(cl!=null?"["+id+"] saved with id ["+cl.getId()+"]":"["+id+"] was not saved");
+		log.info(cl!=null?"["+name+"] saved with id ["+cl.getId()+"]":"["+name+"] was not saved");
 	}
 
 	protected String extractIP(HttpServletRequest request) {
@@ -84,10 +86,10 @@ public class UrlShortenerController {
 			@RequestParam(value = "sponsor", required = false) String sponsor,
 			@RequestParam(value = "brand", required = false) String brand,
 			@RequestParam("urlName") String name, HttpServletRequest request) {
+		this.name=name;
 		ShortURL su = createAndSaveIfValid(url, sponsor, brand, UUID
 				.randomUUID().toString(), extractIP(request), name);
-		MultiplesURIs mu = createAndSaveIfNotExist(url,name);
-		if (su != null && mu != null) {
+		if (su != null) {
 			HttpHeaders h = new HttpHeaders();
 			h.setLocation(su.getUri());
 			return new ResponseEntity<>(su, h, HttpStatus.CREATED);
@@ -101,9 +103,7 @@ public class UrlShortenerController {
 		UrlValidator urlValidator = new UrlValidator(new String[] { "http",
 		"https" });
 		if (urlValidator.isValid(url)) {
-			id = Hashing.murmur3_32()
-					.hashString(url, StandardCharsets.UTF_8).toString();
-			ShortURL su = new ShortURL(id, url,
+			ShortURL su = new ShortURL(name, url,
 					linkTo(
 							methodOn(UrlShortenerController.class).redirectTo(
 									name, null)).toUri(), sponsor, new Date(
@@ -113,10 +113,5 @@ public class UrlShortenerController {
 		} else {
 			return null;
 		}
-	}
-
-	protected MultiplesURIs createAndSaveIfNotExist(String url, String name) {
-		MultiplesURIs su = new MultiplesURIs(name, url);
-		return multiplesURIsRepository.save(su);
 	}
 }
