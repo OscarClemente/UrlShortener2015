@@ -24,8 +24,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import urlshortener2015.common.domain.Click;
+import urlshortener2015.common.domain.MultiplesURIs;
 import urlshortener2015.common.domain.ShortURL;
 import urlshortener2015.common.repository.ClickRepository;
+import urlshortener2015.common.repository.MultiplesURIsRepository;
 import urlshortener2015.common.repository.ShortURLRepository;
 
 import com.google.common.hash.Hashing;
@@ -40,8 +42,14 @@ public class UrlShortenerController {
 	@Autowired
 	protected ClickRepository clickRepository;
 
-	public String id;
+	@Autowired
+	protected MultiplesURIsRepository multiplesURIsRepository;
 	
+	/*@Autowired
+	protected UsuarioRepository usuarioRepository;*/
+
+	public String id;
+
 	@RequestMapping(value = "/{name:(?!link).*}", method = RequestMethod.GET)
 	public ResponseEntity<?> redirectTo(@PathVariable String name,
 			HttpServletRequest request) {
@@ -78,7 +86,8 @@ public class UrlShortenerController {
 			@RequestParam("urlName") String name, HttpServletRequest request) {
 		ShortURL su = createAndSaveIfValid(url, sponsor, brand, UUID
 				.randomUUID().toString(), extractIP(request), name);
-		if (su != null) {
+		MultiplesURIs mu = createAndSaveIfNotExist(url,name);
+		if (su != null && mu != null) {
 			HttpHeaders h = new HttpHeaders();
 			h.setLocation(su.getUri());
 			return new ResponseEntity<>(su, h, HttpStatus.CREATED);
@@ -90,7 +99,7 @@ public class UrlShortenerController {
 	protected ShortURL createAndSaveIfValid(String url, String sponsor,
 			String brand, String owner, String ip, String name) {
 		UrlValidator urlValidator = new UrlValidator(new String[] { "http",
-				"https" });
+		"https" });
 		if (urlValidator.isValid(url)) {
 			id = Hashing.murmur3_32()
 					.hashString(url, StandardCharsets.UTF_8).toString();
@@ -98,11 +107,16 @@ public class UrlShortenerController {
 					linkTo(
 							methodOn(UrlShortenerController.class).redirectTo(
 									name, null)).toUri(), sponsor, new Date(
-							System.currentTimeMillis()), owner,
+											System.currentTimeMillis()), owner,
 					HttpStatus.TEMPORARY_REDIRECT.value(), true, ip, null);
 			return shortURLRepository.save(su);
 		} else {
 			return null;
 		}
+	}
+
+	protected MultiplesURIs createAndSaveIfNotExist(String url, String name) {
+		MultiplesURIs su = new MultiplesURIs(name, url);
+		return multiplesURIsRepository.save(su);
 	}
 }
