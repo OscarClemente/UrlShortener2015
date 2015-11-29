@@ -64,7 +64,7 @@ public class ShortURLRepositoryImpl implements ShortURLRepository {
 					su.getIP(), su.getCountry());
 		} catch (DuplicateKeyException e) {
 			log.debug("When insert for key " + su.getHash(), e);
-			return su;
+			return null;
 		} catch (Exception e) {
 			log.debug("When insert", e);
 			return null;

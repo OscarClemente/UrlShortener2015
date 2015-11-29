@@ -24,9 +24,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import urlshortener2015.common.domain.Click;
+import urlshortener2015.common.domain.MultiplesURIs;
 import urlshortener2015.common.domain.ShortURL;
 import urlshortener2015.common.repository.ClickRepository;
+import urlshortener2015.common.repository.MultiplesURIsRepository;
 import urlshortener2015.common.repository.ShortURLRepository;
+import urlshortener2015.common.repository.UsuarioRepository;
 
 import com.google.common.hash.Hashing;
 
@@ -34,31 +37,38 @@ import com.google.common.hash.Hashing;
 public class UrlShortenerController {
 	private static final Logger log = LoggerFactory
 			.getLogger(UrlShortenerController.class);
+	
 	@Autowired
 	protected ShortURLRepository shortURLRepository;
 
 	@Autowired
 	protected ClickRepository clickRepository;
 
-	public String id;
+	@Autowired
+	protected MultiplesURIsRepository multiplesURIsRepository;
+	
+	@Autowired
+	protected UsuarioRepository usuarioRepository;
+
+	String name;
 	
 	@RequestMapping(value = "/{name:(?!link).*}", method = RequestMethod.GET)
 	public ResponseEntity<?> redirectTo(@PathVariable String name,
 			HttpServletRequest request) {
-		ShortURL l = shortURLRepository.findByKey(id);
+		ShortURL l = shortURLRepository.findByKey(this.name);
 		if (l != null) {
-			createAndSaveClick(extractIP(request));
+			createAndSaveClick(extractIP(request),this.name);
 			return createSuccessfulRedirectToResponse(l);
 		} else {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 	}
 
-	protected void createAndSaveClick(String ip) {
-		Click cl = new Click(null, id, new Date(System.currentTimeMillis()),
+	protected void createAndSaveClick(String ip, String name) {
+		Click cl = new Click(null, name, new Date(System.currentTimeMillis()),
 				null, null, null, ip, null);
 		cl=clickRepository.save(cl);
-		log.info(cl!=null?"["+id+"] saved with id ["+cl.getId()+"]":"["+id+"] was not saved");
+		log.info(cl!=null?"["+name+"] saved with id ["+cl.getId()+"]":"["+name+"] was not saved");
 	}
 
 	protected String extractIP(HttpServletRequest request) {
@@ -76,6 +86,7 @@ public class UrlShortenerController {
 			@RequestParam(value = "sponsor", required = false) String sponsor,
 			@RequestParam(value = "brand", required = false) String brand,
 			@RequestParam("urlName") String name, HttpServletRequest request) {
+		this.name=name;
 		ShortURL su = createAndSaveIfValid(url, sponsor, brand, UUID
 				.randomUUID().toString(), extractIP(request), name);
 		if (su != null) {
@@ -90,15 +101,13 @@ public class UrlShortenerController {
 	protected ShortURL createAndSaveIfValid(String url, String sponsor,
 			String brand, String owner, String ip, String name) {
 		UrlValidator urlValidator = new UrlValidator(new String[] { "http",
-				"https" });
+		"https" });
 		if (urlValidator.isValid(url)) {
-			id = Hashing.murmur3_32()
-					.hashString(url, StandardCharsets.UTF_8).toString();
-			ShortURL su = new ShortURL(id, url,
+			ShortURL su = new ShortURL(name, url,
 					linkTo(
 							methodOn(UrlShortenerController.class).redirectTo(
 									name, null)).toUri(), sponsor, new Date(
-							System.currentTimeMillis()), owner,
+											System.currentTimeMillis()), owner,
 					HttpStatus.TEMPORARY_REDIRECT.value(), true, ip, null);
 			return shortURLRepository.save(su);
 		} else {
