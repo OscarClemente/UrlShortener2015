@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import urlshortener2015.common.domain.ShortURL;
+import urlshortener2015.common.domain.Usuario;
 import urlshortener2015.common.web.UrlShortenerController;
 
 @RestController
@@ -33,5 +34,14 @@ public class UrlShortenerControllerWithLogs extends UrlShortenerController {
 			@RequestParam("urlName") String name, HttpServletRequest request) {
 		logger.info("Requested new short for uri " + url);
 		return super.shortener(url, sponsor, brand, name, request);
+	}
+	
+	@Override
+	public ResponseEntity<Usuario> register(@RequestParam("nick") String nick,
+			@RequestParam(value = "email") String email,
+			@RequestParam(value = "password") String password,
+			@RequestParam(value = "rolAdmin") String rolAdmin, HttpServletRequest request) {
+		logger.info("Requested new user for email " + email);
+		return super.register(nick, email, password, rolAdmin, request);
 	}
 }

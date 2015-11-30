@@ -25,8 +25,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import urlshortener2015.common.domain.Click;
 import urlshortener2015.common.domain.ShortURL;
+import urlshortener2015.common.domain.Usuario;
 import urlshortener2015.common.repository.ClickRepository;
 import urlshortener2015.common.repository.ShortURLRepository;
+import urlshortener2015.common.repository.UsuarioRepository;
 
 import com.google.common.hash.Hashing;
 
@@ -39,6 +41,9 @@ public class UrlShortenerController {
 
 	@Autowired
 	protected ClickRepository clickRepository;
+	
+	@Autowired
+	protected UsuarioRepository usuarioRepository;
 
 	public String id;
 	
@@ -82,6 +87,26 @@ public class UrlShortenerController {
 			HttpHeaders h = new HttpHeaders();
 			h.setLocation(su.getUri());
 			return new ResponseEntity<>(su, h, HttpStatus.CREATED);
+		} else {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@RequestMapping(value = "/register", method = RequestMethod.POST)
+	public ResponseEntity<Usuario> register(@RequestParam(value = "nick") String nick,
+			@RequestParam(value = "email") String email,
+			@RequestParam(value = "password") String password,
+			@RequestParam(value = "rolAdmin") String rolAdmin,
+			HttpServletRequest request) {
+		Usuario user = null;
+		if (email != null && !email.equals("") && password != null
+				&& !password.equals("") && nick != null && !nick.equals("")) {
+			if (usuarioRepository.findByEmail(email) == null) {
+				user = usuarioRepository.save(new Usuario(email, password, nick, rolAdmin));
+			}
+		}
+		if (user != null) {
+			return new ResponseEntity<>(user, HttpStatus.CREATED);
 		} else {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
