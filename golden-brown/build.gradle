@@ -27,7 +27,8 @@ dependencies {
 
     // Provides java script libraries for static content
     compile 'org.webjars:bootstrap:3.3.5'
-    compile 'org.webjars:jquery:2.1.4'    
+    compile 'org.webjars:jquery:2.1.4'
+    compile 'org.webjars:bootbox:4.4.0'
 
     // Testing framework
     testCompile 'org.springframework.boot:spring-boot-starter-test'

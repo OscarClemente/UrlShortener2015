@@ -37,7 +37,8 @@ CREATE TABLE CLICK(
 CREATE TABLE USUARIO(
     CORREO 		VARCHAR(30) PRIMARY KEY,	-- KEY
 	PASSWORD 	VARCHAR(20) NOT NULL,		-- Contraseña
-	NICK 		VARCHAR(20) NOT NULL		-- Nombre de usuario
+	NICK 		VARCHAR(20) NOT NULL,		-- Nombre de usuario
+	ROL_ADMIN	VARCHAR(2) NOT NULL			-- Rol de la cuenta - administrador
 )
 
 -- MULTIPLESURIS
