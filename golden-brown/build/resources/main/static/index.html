@@ -10,11 +10,35 @@
 <script type="text/javascript" src="webjars/bootbox/4.4.0/bootbox.js"></script>
 <script type="text/javascript" src="js/app.js"></script>
 <script type="text/javascript" src="js/register.js"></script>
+<script type="text/javascript" src="js/log.js"></script>
 <script type="text/javascript">
 function User(nick, email, rolAdmin) {
         this.nick = nick;
         this.email = email;
         this.rolAdmin = rolAdmin; }
+
+function show() {
+	var usuario = sessionStorage.getItem('usuario');
+    var view = $.parseJSON(usuario);
+    if (view != null) {
+        document.getElementById("log_in").style.display="none";
+        document.getElementById("register").style.display="none";
+        $("#user").html(
+	    		  "<a id='user' class='btn-info btn-md btn'>" 
+	    		  + view.nick + "</a>");
+        document.getElementById("log_out").style.display="block";
+        document.getElementById("user").style.display="block";
+        
+    }
+    else {
+    	document.getElementById("log_in").style.display="block";
+        document.getElementById("register").style.display="block";
+    	document.getElementById("log_out").style.display="none";
+    	document.getElementById("user").style.display="none";
+    }
+}
+    
+window.onload = show;
 </script>
 <style>
 	.row-header {margin-top:10px;}
@@ -23,9 +47,11 @@ function User(nick, email, rolAdmin) {
 <body>
 	<div class="container-full">
 		<div class="row-header">
-			<div class="col-xs-offset-8 col-xs-4 text-center">
+			<div class="col-xs-offset-8 col-xs-4 text-right">
 	     		<button id="log_in" class="btn-info btn-md btn">Log in</button>
 	     		<button id="register" class="btn-info btn-md btn">Register</button>
+	     		<a id="user"></a>
+	     		<button id="log_out" class="btn-info btn-md btn">Log out</button>
 			</div>
 		</div>
 		<div class="row">
@@ -53,7 +79,7 @@ function User(nick, email, rolAdmin) {
 			<div class="col-xs-12 text-center">
 				<div class="col-xs-offset-4 col-xs-4 text-center">
 					<br />
-					<div id="result" />
+					<div id="result"></div>
 				</div>
 			</div>
 		</div>

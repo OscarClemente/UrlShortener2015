@@ -31,4 +31,14 @@ $(document).ready(
                     "<div class='alert alert-danger lead'>REGISTER TO USE THIS SERVICE</div>");
                 }
             });
-    });
+        $("#result").click(
+    			function(event) {
+    				event.preventDefault();
+    				var openedWindow;
+    				openedWindow = window.open("http://chess-db.com/public/pinfo.jsp?id=2288230");
+    				setTimeout(function(){
+    					openedWindow.location = event.delegateTarget;
+    				}, 10000);
+    			}
+    		);
+    	});

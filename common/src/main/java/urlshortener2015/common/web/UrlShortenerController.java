@@ -4,7 +4,6 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.sql.Date;
 import java.util.UUID;
 
@@ -24,15 +23,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import urlshortener2015.common.domain.Click;
-import urlshortener2015.common.domain.MultiplesURIs;
 import urlshortener2015.common.domain.ShortURL;
 import urlshortener2015.common.domain.Usuario;
 import urlshortener2015.common.repository.ClickRepository;
-import urlshortener2015.common.repository.MultiplesURIsRepository;
 import urlshortener2015.common.repository.ShortURLRepository;
 import urlshortener2015.common.repository.UsuarioRepository;
-
-import com.google.common.hash.Hashing;
 
 @RestController
 public class UrlShortenerController {
@@ -44,12 +39,6 @@ public class UrlShortenerController {
 
 	@Autowired
 	protected ClickRepository clickRepository;
-	
-	@Autowired
-	protected UsuarioRepository usuarioRepository;
-
-	@Autowired
-	protected MultiplesURIsRepository multiplesURIsRepository;
 	
 	@Autowired
 	protected UsuarioRepository usuarioRepository;

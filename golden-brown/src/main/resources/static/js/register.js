@@ -21,6 +21,13 @@ $(document).ready(
 				        			  bootbox.alert("User created. Welcome");
 				        			  var usuario = new User(msg.nick, msg.correo, msg.rolAdmin);
 				        			  sessionStorage.setItem('usuario', JSON.stringify(usuario));
+				        			  document.getElementById("log_in").style.visibility="none";
+				        		      document.getElementById("register").style.visibility="none";
+				        		      $("#user").html(
+				        		    		  "<a id='user' class='btn-info btn-md btn'>" 
+				        		    		  + msg.nick + "</a>");
+				        		      document.getElementById("log_out").style.visibility="block";
+				        		      document.getElementById("user").style.visibility="block";
 			                      },
 			                      error : function(msg) {
 				        			  bootbox.alert("Incorrect data. Try again");
