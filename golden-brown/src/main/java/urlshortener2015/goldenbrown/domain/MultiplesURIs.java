@@ -1,4 +1,4 @@
-package urlshortener2015.common.domain;
+package urlshortener2015.goldenbrown.domain;
 
 public class MultiplesURIs {
 

@@ -20,18 +20,17 @@ public class UrlShortenerControllerWithLogs extends UrlShortenerController {
 	private static final Logger logger = LoggerFactory.getLogger(UrlShortenerControllerWithLogs.class);
 
 	@Override
-	@RequestMapping(value = "/{name:(?!link|index).*}", method = RequestMethod.GET)
-	public ResponseEntity<?> redirectTo(@PathVariable String name, HttpServletRequest request) {
-		logger.info("Requested redirection with hash " + name);
-		return super.redirectTo(name, request);
+	@RequestMapping(value = "/{id:(?!link|index).*}", method = RequestMethod.GET)
+	public ResponseEntity<?> redirectTo(@PathVariable String id, HttpServletRequest request) {
+		logger.info("Requested redirection with hash " + id);
+		return super.redirectTo(id, request);
 	}
 
 	@Override
 	public ResponseEntity<ShortURL> shortener(@RequestParam("url") String url,
 			@RequestParam(value = "sponsor", required = false) String sponsor,
-			@RequestParam(value = "brand", required = false) String brand,
-			@RequestParam("urlName") String name, HttpServletRequest request) {
+			@RequestParam(value = "brand", required = false) String brand, HttpServletRequest request) {
 		logger.info("Requested new short for uri " + url);
-		return super.shortener(url, sponsor, brand, name, request);
+		return super.shortener(url, sponsor, brand, request);
 	}
 }
