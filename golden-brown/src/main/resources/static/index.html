@@ -26,13 +26,13 @@ function show() {
         $("#user").html(
 	    		  "<a id='user' class='btn-info btn-md btn'>" 
 	    		  + view.nick + "</a>");
-        document.getElementById("log_out").style.display="block";
-        document.getElementById("user").style.display="block";
+        document.getElementById("log_out").style.display="inline";
+        document.getElementById("user").style.display="inline";
         
     }
     else {
-    	document.getElementById("log_in").style.display="block";
-        document.getElementById("register").style.display="block";
+    	document.getElementById("log_in").style.display="inline";
+        document.getElementById("register").style.display="inline";
     	document.getElementById("log_out").style.display="none";
     	document.getElementById("user").style.display="none";
     }
@@ -46,13 +46,11 @@ window.onload = show;
 </head>
 <body>
 	<div class="container-full">
-		<div class="row-header">
-			<div class="col-xs-offset-8 col-xs-4 text-center">
-	     		<button id="log_in" class="btn-info btn-md btn">Log in</button>
-	     		<button id="register" class="btn-info btn-md btn">Register</button>
-	     		<a id="user"></a>
-	     		<button id="log_out" class="btn-info btn-md btn">Log out</button>
-			</div>
+		<div class="row-header col-xs-offset-8 col-xs-4 text-center">
+     		<button id="log_in" class="btn-info btn-md btn">Log in</button>
+     		<button id="register" class="btn-info btn-md btn">Register</button>
+     		<a id="user"></a>
+     		<button id="log_out" class="btn-info btn-md btn">Log out</button>
 		</div>
 		<div class="row">
 			<div class="col-xs-12 text-center">
