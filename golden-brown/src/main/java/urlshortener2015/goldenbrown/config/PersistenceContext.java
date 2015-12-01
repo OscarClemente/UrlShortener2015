@@ -9,8 +9,8 @@ import urlshortener2015.common.repository.ClickRepository;
 import urlshortener2015.common.repository.ClickRepositoryImpl;
 import urlshortener2015.common.repository.ShortURLRepository;
 import urlshortener2015.common.repository.ShortURLRepositoryImpl;
-import urlshortener2015.common.repository.UsuarioRepository;
-import urlshortener2015.common.repository.UsuarioRepositoryImpl;
+import urlshortener2015.goldenbrown.repository.UsuarioRepository;
+import urlshortener2015.goldenbrown.repository.UsuarioRepositoryImpl;
 
 @Configuration
 public class PersistenceContext {

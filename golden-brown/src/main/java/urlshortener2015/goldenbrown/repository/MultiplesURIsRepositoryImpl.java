@@ -1,4 +1,4 @@
-package urlshortener2015.common.repository;
+package urlshortener2015.goldenbrown.repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,7 +12,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import urlshortener2015.common.domain.MultiplesURIs;
+import urlshortener2015.goldenbrown.domain.MultiplesURIs;
 
 
 @Repository

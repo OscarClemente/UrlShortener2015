@@ -1,6 +1,6 @@
-package urlshortener2015.common.repository;
+package urlshortener2015.goldenbrown.repository;
 
-import urlshortener2015.common.domain.Usuario;
+import urlshortener2015.goldenbrown.domain.Usuario;
 
 public interface UsuarioRepository {
 

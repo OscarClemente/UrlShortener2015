@@ -1,8 +1,8 @@
-package urlshortener2015.common.repository;
+package urlshortener2015.goldenbrown.repository;
 
 import java.util.List;
 
-import urlshortener2015.common.domain.MultiplesURIs;
+import urlshortener2015.goldenbrown.domain.MultiplesURIs;
 
 public interface MultiplesURIsRepository {
 

@@ -4,6 +4,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.sql.Date;
 import java.util.UUID;
 
@@ -24,44 +25,38 @@ import org.springframework.web.bind.annotation.RestController;
 
 import urlshortener2015.common.domain.Click;
 import urlshortener2015.common.domain.ShortURL;
-import urlshortener2015.common.domain.Usuario;
 import urlshortener2015.common.repository.ClickRepository;
 import urlshortener2015.common.repository.ShortURLRepository;
-import urlshortener2015.common.repository.UsuarioRepository;
+
+import com.google.common.hash.Hashing;
 
 @RestController
 public class UrlShortenerController {
 	private static final Logger log = LoggerFactory
 			.getLogger(UrlShortenerController.class);
-	
 	@Autowired
 	protected ShortURLRepository shortURLRepository;
 
 	@Autowired
 	protected ClickRepository clickRepository;
-	
-	@Autowired
-	protected UsuarioRepository usuarioRepository;
 
-	String name;
-	
-	@RequestMapping(value = "/{name:(?!link).*}", method = RequestMethod.GET)
-	public ResponseEntity<?> redirectTo(@PathVariable String name,
+	@RequestMapping(value = "/{id:(?!link).*}", method = RequestMethod.GET)
+	public ResponseEntity<?> redirectTo(@PathVariable String id,
 			HttpServletRequest request) {
-		ShortURL l = shortURLRepository.findByKey(this.name);
+		ShortURL l = shortURLRepository.findByKey(id);
 		if (l != null) {
-			createAndSaveClick(extractIP(request),this.name);
+			createAndSaveClick(id, extractIP(request));
 			return createSuccessfulRedirectToResponse(l);
 		} else {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 	}
 
-	protected void createAndSaveClick(String ip, String name) {
-		Click cl = new Click(null, name, new Date(System.currentTimeMillis()),
+	protected void createAndSaveClick(String hash, String ip) {
+		Click cl = new Click(null, hash, new Date(System.currentTimeMillis()),
 				null, null, null, ip, null);
 		cl=clickRepository.save(cl);
-		log.info(cl!=null?"["+name+"] saved with id ["+cl.getId()+"]":"["+name+"] was not saved");
+		log.info(cl!=null?"["+hash+"] saved with id ["+cl.getId()+"]":"["+hash+"] was not saved");
 	}
 
 	protected String extractIP(HttpServletRequest request) {
@@ -78,10 +73,9 @@ public class UrlShortenerController {
 	public ResponseEntity<ShortURL> shortener(@RequestParam("url") String url,
 			@RequestParam(value = "sponsor", required = false) String sponsor,
 			@RequestParam(value = "brand", required = false) String brand,
-			@RequestParam("urlName") String name, HttpServletRequest request) {
-		this.name=name;
+			HttpServletRequest request) {
 		ShortURL su = createAndSaveIfValid(url, sponsor, brand, UUID
-				.randomUUID().toString(), extractIP(request), name);
+				.randomUUID().toString(), extractIP(request));
 		if (su != null) {
 			HttpHeaders h = new HttpHeaders();
 			h.setLocation(su.getUri());
@@ -90,37 +84,19 @@ public class UrlShortenerController {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
-	@RequestMapping(value = "/register", method = RequestMethod.POST)
-	public ResponseEntity<Usuario> register(@RequestParam(value = "nick") String nick,
-			@RequestParam(value = "email") String email,
-			@RequestParam(value = "password") String password,
-			@RequestParam(value = "rolAdmin") String rolAdmin,
-			HttpServletRequest request) {
-		Usuario user = null;
-		if (email != null && !email.equals("") && password != null
-				&& !password.equals("") && nick != null && !nick.equals("")) {
-			if (usuarioRepository.findByEmail(email) == null) {
-				user = usuarioRepository.save(new Usuario(email, password, nick, rolAdmin));
-			}
-		}
-		if (user != null) {
-			return new ResponseEntity<>(user, HttpStatus.CREATED);
-		} else {
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		}
-	}
 
 	protected ShortURL createAndSaveIfValid(String url, String sponsor,
-			String brand, String owner, String ip, String name) {
+			String brand, String owner, String ip) {
 		UrlValidator urlValidator = new UrlValidator(new String[] { "http",
-		"https" });
+				"https" });
 		if (urlValidator.isValid(url)) {
-			ShortURL su = new ShortURL(name, url,
+			String id = Hashing.murmur3_32()
+					.hashString(url, StandardCharsets.UTF_8).toString();
+			ShortURL su = new ShortURL(id, url,
 					linkTo(
 							methodOn(UrlShortenerController.class).redirectTo(
-									name, null)).toUri(), sponsor, new Date(
-											System.currentTimeMillis()), owner,
+									id, null)).toUri(), sponsor, new Date(
+							System.currentTimeMillis()), owner,
 					HttpStatus.TEMPORARY_REDIRECT.value(), true, ip, null);
 			return shortURLRepository.save(su);
 		} else {
