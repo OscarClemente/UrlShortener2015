@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="urlshortener2015.common.repository.UsuarioRepository"/>
-<fullyQualifiedTypeName name="urlshortener2015.common.repository.UsuarioRepositoryImpl"/>
-<fullyQualifiedTypeName name="urlshortener2015.common.domain.Usuario"/>
-<fullyQualifiedTypeName name="urlshortener2015.goldenbrown.domain.Usuario"/>
-<fullyQualifiedTypeName name="urlshortener2015.goldenbrown.domain.MultiplesURIs"/>
-</qualifiedTypeNameHistroy>

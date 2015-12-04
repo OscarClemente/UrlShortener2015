@@ -3,4 +3,19 @@
 /.settings/
 /.gradle/
 /.metadata/
+/RemoteSystemsTempFiles/
 /build/
+/*/.settings/
+
+# Eclipse project files
+.classpath
+.project
+.metadata
+.settings
+
+#generated files
+bin/
+gen/
+
+#Java class files
+.class
