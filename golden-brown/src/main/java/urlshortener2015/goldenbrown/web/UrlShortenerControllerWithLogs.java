@@ -45,7 +45,7 @@ public class UrlShortenerControllerWithLogs {
 
 	String name;
 	
-	@RequestMapping(value = "/{name:(?!link).*}", method = RequestMethod.GET)
+	@RequestMapping(value = "/{name:(?!link|index).*}", method = RequestMethod.GET)
 	public ResponseEntity<?> redirectTo(@PathVariable String name,
 			HttpServletRequest request) {
 		logger.info("Requested redirection with hash " + name);
