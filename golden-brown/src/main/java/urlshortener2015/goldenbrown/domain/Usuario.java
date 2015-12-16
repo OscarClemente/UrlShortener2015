@@ -2,35 +2,25 @@ package urlshortener2015.goldenbrown.domain;
 
 public class Usuario {
 
-	private String correo;
-	private String password;
+	private String username;
 	private String nick;
-	private String rolAdmin;
+	private String password;
 	
-	public Usuario(String correo, String password, String nick, String rolAdmin) {
-		this.correo=correo;
-		this.password=password;
+	public Usuario(String username, String nick, String password) {
+		this.username=username;
 		this.nick=nick;
-		this.rolAdmin=rolAdmin;
+		this.password=password;
 	}
 
 	public Usuario() {
 	}
-	
-	public String getCorreo() {
-		return correo;
+
+	public String getUsername() {
+		return username;
 	}
 
-	public void setCorreo(String correo) {
-		this.correo = correo;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	public String getNick() {
@@ -40,12 +30,12 @@ public class Usuario {
 	public void setNick(String nick) {
 		this.nick = nick;
 	}
-	
-	public String getRolAdmin() {
-		return rolAdmin;
+
+	public String getPassword() {
+		return password;
 	}
 
-	public void setRolAdmin(String rolAdmin) {
-		this.rolAdmin = rolAdmin;
+	public void setPassword(String password) {
+		this.password = password;
 	}
 }

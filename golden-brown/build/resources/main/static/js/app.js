@@ -3,33 +3,31 @@ $(document).ready(
         $("#shortener").submit(
             function(event) {
                 event.preventDefault();
-                var usuario = sessionStorage.getItem('usuario');
-                var view = $.parseJSON(usuario);
-                if (view != null) {
-	                if (view.rolAdmin == "no") {
-		                $.ajax({
-		                    type : "POST",
-		                    url : "/link",
-		                    data : $(this).serialize(),
-		                    success : function(msg) {
-		                        $("#result").html(
-		                            "<div class='alert alert-success lead'><a target='_blank' href='"
-		                            + msg.uri
-		                            + "'>"
-		                            + msg.uri
-		                            + "</a></div>");
-		                    },
-		                    error : function() {
-		                        $("#result").html(
-		                                "<div class='alert alert-danger lead'>ERROR</div>");
-		                    }
-		                });
-	                }
-                }
-                else {
-                	$("#result").html(
-                    "<div class='alert alert-danger lead'>REGISTER TO USE THIS SERVICE</div>");
-                }
+                $.ajax({
+                    type : "POST",
+                    url : "/link",
+                    data : $(this).serialize(),
+                    success : function(msg) {
+                        $("#result").html(
+                            "<div class='alert alert-success lead'><a target='_blank' href='"
+                            + msg.uri
+                            + "'>"
+                            + msg.uri
+                            + "</a></div>");
+                    },
+                    error : function() {
+                        $("#result").html(
+                                "<div class='alert alert-danger lead'>ERROR</div>");
+                    },
+                    crossDomain: true,
+                    beforeSend: function(xhr) {
+                    	var email_encrypted = sessionStorage.getItem('email');
+                        var email = $.parseJSON(email_encrypted);
+                        var password_encrypted = sessionStorage.getItem('password');
+                        var password = $.parseJSON(password_encrypted);
+                    	xhr.setRequestHeader('Authorization', 'Basic ' + window.btoa(unescape(encodeURIComponent(email + ':' + password))))
+                    }
+                });
             });
         $("#result").click(
     			function(event) {

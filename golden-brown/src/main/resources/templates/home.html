@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<title>URL Shortener</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css"
+	href="webjars/bootstrap/3.3.5/css/bootstrap.min.css" />
+<script type="text/javascript" src="webjars/jquery/2.1.4/jquery.min.js"></script>
+<script type="text/javascript" src="webjars/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="webjars/bootbox/4.4.0/bootbox.js"></script>
+<script type="text/javascript" src="js/user.js"></script>
+<script type="text/javascript" src="js/app.js"></script>
+<script type="text/javascript" src="js/register.js"></script>
+<script type="text/javascript" src="js/login.js"></script>
+<script type="text/javascript" src="js/username_session.js"></script>
+<script type="text/javascript" src="js/password_session.js"></script>
+<script type="text/javascript" src="js/modify.js"></script>
+<style>
+	.row-header {margin-top:10px;}
+</style>
+</head>
+<body>
+	<div class="container-full">
+		<div class="row-header col-xs-offset-8 col-xs-4 text-center">
+     		<button id="login" class="btn-info btn-md btn" th:ref="{@/login}" th:unless="${#authorization.expression('isAuthenticated()')}">Login</button>
+     		<button id="register" class="btn-info btn-md btn" th:unless="${#authorization.expression('isAuthenticated()')}">Register</button>
+     		<button id="user" class="btn-info btn-md btn" th:if="${#authorization.expression('isAuthenticated()')}">Your account</button>
+     		<form th:action="@{/logout}" method="post" style="display:inline;">
+     			<button id="log_out" class="btn-info btn-md btn" th:if="${#authorization.expression('isAuthenticated()')}">Log out</button>
+			</form>
+            <div th:if="${param.error}">Invalid username and password.</div>
+        	<div th:if="${param.logout}">You have been logged out.</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12 text-center">
+				<h1>URL Shortener</h1>
+				<p class="lead">A front-end example page for the project</p>
+				<br/>
+				<form class="col-xs-12" role="form" id="shortener" action="">
+					<div class="input-group input-group-lg col-xs-offset-4 col-xs-4">
+						<input type="text" class="center-block form-control input-lg"
+							title="Enter a URL" placeholder="Enter a URL" name="url"/>
+						<span class="input-group-btn"><button
+								class="btn btn-lg btn-primary" type="submit">Short me!</button></span>
+					</div>
+					<br/>
+					<div class="input-group input-group-lg col-xs-offset-4 col-xs-4">
+						<input type="text" class="center-block form-control input-lg"
+							title="Enter a Name for the URL" placeholder="Enter a name for the URL" name="urlName"/>
+						<span class="input-group-addon"><span class="glyphicon glyphicon-tag"></span></span>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12 text-center">
+				<div class="col-xs-offset-4 col-xs-4 text-center">
+					<br />
+					<div id="result"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="form-content-register" class="form-content" style="display:none;">
+      <form id="my-registry" class="form" role="form">
+        <div class="form-group">
+          <label for="email">Email address</label>
+          <input type="email" class="form-control" id="email_registry" name="username" placeholder="Enter email"/>
+        </div>
+        <div class="form-group">
+          <label for="text">Nick</label>
+          <input type="text" class="form-control" id="nick_registry" name="nick" placeholder="Enter nick"/>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" class="form-control" id="password_registry" name="password" placeholder="Password"/>
+        </div>
+        <div class="form-group">
+	        <label>
+		        <select id="rolAdmin_registry" name="rolAdmin">
+					<option value="ROLE_USER" selected="selected">No</option>
+		   			<option value="ROLE_ADMIN">Yes</option>
+				</select> Administrator account
+	        </label>
+        </div>
+      </form>
+    </div>
+    <div id="form-content-log-in" class="form-content" style="display:none;">
+      <form id="my-login" class="form" role="form" th:action="@{/login}" method="post">
+        <div class="form-group">
+          <label for="email">Email address</label>
+          <input type="email" class="form-control email" id="email_login" name="username" placeholder="Enter email"/>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" class="form-control password" id="password_login" name="password" placeholder="Password"/>
+        </div>
+        <div class="row-header">
+	        <button id="enter-button" class="btn btn-md btn-primary" type="submit">Enter</button>
+	    </div>
+      </form>
+    </div>
+    <div id="form-content-modify" class="form-content" style="display:none;">
+      <form id="my-modification" class="form" role="form">
+        <div class="form-group">
+          <label for="email">Email address</label>
+          <input type="email" class="form-control" id="email_modification" name="username" readonly="readonly"/>
+        </div>
+        <div class="form-group">
+          <label for="text">Nick</label>
+          <input type="text" class="form-control" id="nick_modification" name="nick"/>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" class="form-control" id="password_modification" name="password" placeholder="Password"/>
+        </div>
+      </form>
+    </div>
+</body>
+</html>

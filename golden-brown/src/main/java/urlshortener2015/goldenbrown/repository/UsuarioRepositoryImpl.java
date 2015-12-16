@@ -5,8 +5,6 @@ import java.sql.SQLException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -24,40 +22,52 @@ public class UsuarioRepositoryImpl implements UsuarioRepository {
 	private static final RowMapper<Usuario> rowMapper = new RowMapper<Usuario>() {
 		@Override
 		public Usuario mapRow(ResultSet rs, int rowNum) throws SQLException {
-			return new Usuario(rs.getString("correo"), rs.getString("password"),
-					rs.getString("nick"), rs.getString("rol_admin"));
+			return new Usuario(rs.getString("username"), rs.getString("nick"),
+					rs.getString("password"));
 		}
 	};
-
+	
 	@Autowired
 	protected JdbcTemplate jdbc;
-
+	
 	public UsuarioRepositoryImpl() {
 	}
 
 	public UsuarioRepositoryImpl(JdbcTemplate jdbc) {
-		this.jdbc = jdbc;
+		this.jdbc=jdbc;
 	}
 
 	@Override
-	public Usuario findByEmail(String correo) {
+	public Usuario findByUsername(String username) {
 		try {
-			return jdbc.queryForObject("SELECT * FROM usuario WHERE correo=?",
-					rowMapper, correo);
+			return jdbc.queryForObject("SELECT * FROM users WHERE username=?",
+					rowMapper, username);
 		} catch (Exception e) {
-			log.debug("When select for email " + correo, e);
+			log.debug("When select for username " + username, e);
 			return null;
 		}
 	}
-
+	
 	@Override
-	public Usuario save(Usuario user) {
+	public Usuario findByUsernameAndPassword(String username, String password) {
 		try {
-			jdbc.update("INSERT INTO usuario VALUES (?,?,?,?)",
-					user.getCorreo(), user.getPassword(), user.getNick(),
-					user.getRolAdmin());
+			return jdbc.queryForObject("SELECT * FROM users WHERE username=? AND password=?",
+					rowMapper, username, password);
+		} catch (Exception e) {
+			log.debug("When select for username " + username, e);
+			return null;
+		}
+	}
+	
+	@Override
+	public Usuario save(Usuario user, String rolAdmin) {
+		try {
+			jdbc.update("INSERT INTO users VALUES (?,?,?,?)",
+					user.getUsername(), user.getNick(), user.getPassword(), true);
+			jdbc.update("INSERT INTO authorities VALUES (?,?)",
+					user.getUsername(), rolAdmin);
 		} catch (DuplicateKeyException e) {
-			log.debug("When insert for email " + user.getCorreo(), e);
+			log.debug("When insert for username " + user.getUsername(), e);
 			return null;
 		} catch (Exception e) {
 			log.debug("When insert", e);
@@ -67,37 +77,23 @@ public class UsuarioRepositoryImpl implements UsuarioRepository {
 	}
 
 	@Override
-	public Usuario setRol(Usuario user, boolean rol_admin) {
-		try {
-			jdbc.update("UPDATE usuario SET rol_admin=? WHERE correo=?", rol_admin,
-					user.getCorreo());
-			Usuario res = new Usuario();
-			BeanUtils.copyProperties(user, res);
-			new DirectFieldAccessor(res).setPropertyValue("rol_admin", rol_admin);
-			return res;
-		} catch (Exception e) {
-			log.debug("When update", e);
-			return null;
-		}
-	}
-
-	@Override
 	public void update(Usuario user) {
 		try {
 			jdbc.update(
-					"update usuario set correo=?, password=?, nick=?, rol_admin=? where correo=?",
-					user.getCorreo(), user.getNick(), user.getNick(), user.getRolAdmin());
+					"UPDATE users SET username=?, nick=?, password=? WHERE username=?",
+					user.getUsername(), user.getNick(), user.getPassword());
 		} catch (Exception e) {
-			log.debug("When update for email " + user.getCorreo(), e);
+			log.debug("When update for username " + user.getUsername(), e);
 		}
 	}
 
 	@Override
-	public void delete(String correo) {
+	public void delete(String username) {
 		try {
-			jdbc.update("delete from usuario where correo=?", correo);
+			jdbc.update("DELETE FROM users WHERE username=?", username);
+			jdbc.update("DETELE FROM authorities WHERE username=?", username);
 		} catch (Exception e) {
-			log.debug("When delete for email " + correo, e);
+			log.debug("When delete for username " + username, e);
 		}
 	}
 }
