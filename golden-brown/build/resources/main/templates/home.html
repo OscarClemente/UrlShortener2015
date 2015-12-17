@@ -9,7 +9,6 @@
 <script type="text/javascript" src="webjars/jquery/2.1.4/jquery.min.js"></script>
 <script type="text/javascript" src="webjars/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="webjars/bootbox/4.4.0/bootbox.js"></script>
-<script type="text/javascript" src="js/user.js"></script>
 <script type="text/javascript" src="js/app.js"></script>
 <script type="text/javascript" src="js/register.js"></script>
 <script type="text/javascript" src="js/login.js"></script>
@@ -66,19 +65,19 @@
       <form id="my-registry" class="form" role="form">
         <div class="form-group">
           <label for="email">Email address</label>
-          <input type="email" class="form-control" id="email_registry" name="username" placeholder="Enter email"/>
+          <input type="email" class="form-control" id="email-registry" name="username" placeholder="Enter email"/>
         </div>
         <div class="form-group">
           <label for="text">Nick</label>
-          <input type="text" class="form-control" id="nick_registry" name="nick" placeholder="Enter nick"/>
+          <input type="text" class="form-control" id="nick-registry" name="nick" placeholder="Enter nick"/>
         </div>
         <div class="form-group">
           <label for="password">Password</label>
-          <input type="password" class="form-control" id="password_registry" name="password" placeholder="Password"/>
+          <input type="password" class="form-control" id="password-registry" name="password" placeholder="Enter password"/>
         </div>
         <div class="form-group">
 	        <label>
-		        <select id="rolAdmin_registry" name="rolAdmin">
+		        <select id="rolAdmin-registry" name="rolAdmin">
 					<option value="ROLE_USER" selected="selected">No</option>
 		   			<option value="ROLE_ADMIN">Yes</option>
 				</select> Administrator account
@@ -90,11 +89,11 @@
       <form id="my-login" class="form" role="form" th:action="@{/login}" method="post">
         <div class="form-group">
           <label for="email">Email address</label>
-          <input type="email" class="form-control email" id="email_login" name="username" placeholder="Enter email"/>
+          <input type="email" class="form-control email" id="email-login" name="username" placeholder="Enter email"/>
         </div>
         <div class="form-group">
           <label for="password">Password</label>
-          <input type="password" class="form-control password" id="password_login" name="password" placeholder="Password"/>
+          <input type="password" class="form-control password" id="password-login" name="password" placeholder="Enter password"/>
         </div>
         <div class="row-header">
 	        <button id="enter-button" class="btn btn-md btn-primary" type="submit">Enter</button>
@@ -105,15 +104,15 @@
       <form id="my-modification" class="form" role="form">
         <div class="form-group">
           <label for="email">Email address</label>
-          <input type="email" class="form-control" id="email_modification" name="username" readonly="readonly"/>
+          <input type="email" class="form-control" id="email-modification" name="username" placeholder="Enter email" readonly="readonly"/>
         </div>
         <div class="form-group">
           <label for="text">Nick</label>
-          <input type="text" class="form-control" id="nick_modification" name="nick"/>
+          <input type="text" class="form-control" id="nick-modification" name="nick" placeholder="Enter nick"/>
         </div>
         <div class="form-group">
           <label for="password">Password</label>
-          <input type="password" class="form-control" id="password_modification" name="password" placeholder="Password"/>
+          <input type="password" class="form-control" id="password-modification" name="password" placeholder="Enter password"/>
         </div>
       </form>
     </div>

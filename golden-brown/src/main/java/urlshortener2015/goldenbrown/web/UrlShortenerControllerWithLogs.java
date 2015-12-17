@@ -125,9 +125,9 @@ public class UrlShortenerControllerWithLogs {
 		Usuario user = null;
 		if (username != null && !username.equals("") && password != null
 				&& !password.equals("") && nick != null && !nick.equals("")) {
-			user = usuarioRepository.findByUsernameAndPassword(username, password);
+			user = usuarioRepository.findByUsername(username);
 			if (user != null) {
-				usuarioRepository.update(user);
+				usuarioRepository.update(new Usuario(username, nick, password));
 			}
 		}
 		if (user != null) {
@@ -136,6 +136,20 @@ public class UrlShortenerControllerWithLogs {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
+	
+	@RequestMapping(value = "/dataUser", method = RequestMethod.GET)
+	public ResponseEntity<Usuario> dataUser(@RequestParam(value = "username") String username) {
+		logger.info("Requested data from user with username " + username);
+		Usuario user = null;
+		if (username != null && !username.equals("")) {
+			user = usuarioRepository.findByUsername(username);
+		}
+		if (user != null) {
+			return new ResponseEntity<>(user, HttpStatus.ACCEPTED);
+		} else {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+	}	
 	
 	@RequestMapping(value = "/listLinks", method = RequestMethod.POST)
 	public ResponseEntity<List<ShortURL>> update(@RequestParam(value = "username") String username,

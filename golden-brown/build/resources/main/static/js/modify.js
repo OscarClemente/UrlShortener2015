@@ -1,5 +1,6 @@
 $(document).ready(
 	function() {
+		dataUser();
 		$("#user").on("click", function(event) {
 			var modal = bootbox.dialog({
 				message: $("#form-content-modify").html(),
@@ -19,28 +20,46 @@ $(document).ready(
 			                      success : function(msg) {
 					        		  modal.modal("hide");
 				        			  bootbox.alert("Data updated");
-				        		      $("#user").html(
-				        		    		  "<a id='user' class='btn-info btn-md btn'>" 
-				        		    		  + msg.nick + "</a>");
 			                      },
 			                      error : function(msg) {
 				        			  bootbox.alert("Incorrect update. Try again");
+			                      },
+			                      crossDomain: true,
+			                      beforeSend: function(xhr) {
+			                      	var email_encrypted = sessionStorage.getItem('email');
+			                          var email = $.parseJSON(email_encrypted);
+			                          var password_encrypted = sessionStorage.getItem('password');
+			                          var password = $.parseJSON(password_encrypted);
+			                      	xhr.setRequestHeader('Authorization', 'Basic ' + window.btoa(unescape(encodeURIComponent(email + ':' + password))))
 			                      }
 			        		  });
 		        		  }
 		        		  return false;
 		        		  }
-		        	  },
-		        	  {
-		        		  label: "Close",
-		        		  className: "btn btn-default pull-left"
 		        	  }
 		        	  ],
 		        	  show: false,
 		        	  onEscape: function() {
 		        		  modal.modal("hide");
 		        	  }
-				});			    
+				});
 			   	modal.modal("show");
 			});
 	});
+
+function dataUser() {
+	var email_encrypted = sessionStorage.getItem('email');
+    var email = $.parseJSON(email_encrypted);
+	$("#user").on("click", function(event) {
+		$.ajax({
+		  type : "GET",
+            url : "/dataUser",
+            data: { username: email },
+            success : function(msg) {
+            	$('#email-modification', '.bootbox').val(msg.username);
+				$('#nick-modification', '.bootbox').val(msg.nick);
+				$('#password-modification', '.bootbox').val(msg.password);
+            }
+	  	});
+	});
+}

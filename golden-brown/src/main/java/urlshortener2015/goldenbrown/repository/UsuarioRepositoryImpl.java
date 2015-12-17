@@ -80,8 +80,8 @@ public class UsuarioRepositoryImpl implements UsuarioRepository {
 	public void update(Usuario user) {
 		try {
 			jdbc.update(
-					"UPDATE users SET username=?, nick=?, password=? WHERE username=?",
-					user.getUsername(), user.getNick(), user.getPassword());
+					"UPDATE users SET nick=?, password=? WHERE username=?",
+					user.getNick(), user.getPassword(), user.getUsername());
 		} catch (Exception e) {
 			log.debug("When update for username " + user.getUsername(), e);
 		}
