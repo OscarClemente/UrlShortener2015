@@ -24,7 +24,7 @@
 		<div class="row-header col-xs-offset-8 col-xs-4 text-center">
      		<button id="login" class="btn-info btn-md btn" th:ref="{@/login}" th:unless="${#authorization.expression('isAuthenticated()')}">Login</button>
      		<button id="register" class="btn-info btn-md btn" th:unless="${#authorization.expression('isAuthenticated()')}">Register</button>
-     		<button id="user" class="btn-info btn-md btn" th:if="${#authorization.expression('isAuthenticated()')}">Your account</button>
+     		<button id="user" class="btn-info btn-md btn" th:if="${#authorization.expression('isAuthenticated()')}">My account</button>
      		<form th:action="@{/logout}" method="post" style="display:inline;">
      			<button id="log_out" class="btn-info btn-md btn" th:if="${#authorization.expression('isAuthenticated()')}">Log out</button>
 			</form>
