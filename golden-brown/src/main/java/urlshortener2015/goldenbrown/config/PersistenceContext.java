@@ -7,20 +7,20 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import urlshortener2015.common.repository.ClickRepository;
 import urlshortener2015.common.repository.ClickRepositoryImpl;
-import urlshortener2015.common.repository.ShortURLRepository;
-import urlshortener2015.common.repository.ShortURLRepositoryImpl;
+import urlshortener2015.goldenbrown.repository.ShortURLRepositoryExtended;
+import urlshortener2015.goldenbrown.repository.ShortURLRepositoryImplExtended;
 import urlshortener2015.goldenbrown.repository.UsuarioRepository;
 import urlshortener2015.goldenbrown.repository.UsuarioRepositoryImpl;
 
 @Configuration
 public class PersistenceContext {
-
+	
 	@Autowired
     protected JdbcTemplate jdbc;
-
+	
 	@Bean
-	ShortURLRepository shortURLRepository() {
-		return new ShortURLRepositoryImpl(jdbc);
+	ShortURLRepositoryExtended shortURLRepository() {
+		return new ShortURLRepositoryImplExtended(jdbc);
 	}
  	
 	@Bean
@@ -32,5 +32,4 @@ public class PersistenceContext {
 	UsuarioRepository usuarioRepository() {
 		return new UsuarioRepositoryImpl(jdbc);
 	}
-	
 }

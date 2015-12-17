@@ -4,14 +4,14 @@ import urlshortener2015.goldenbrown.domain.Usuario;
 
 public interface UsuarioRepository {
 
-	Usuario findByEmail(String correo);
+	Usuario findByUsername(String username);
 
-	Usuario save(Usuario user);
-
-	Usuario setRol(Usuario user, boolean rol_admin);
+	Usuario findByUsernameAndPassword(String username, String password);
+	
+	Usuario save(Usuario user, String rolAdmin);
 
 	void update(Usuario user);
 
-	void delete(String correo);
+	void delete(String username);
 
 }
