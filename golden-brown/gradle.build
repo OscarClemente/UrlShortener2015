@@ -6,4 +6,5 @@ eclipse {
 
 dependencies {
    compile project(":common")
+   compile files("D:\\Daniel\\Universidad\\IW\\UrlShortener2015\\golden-brown\\lib\\rita.jar")
 }

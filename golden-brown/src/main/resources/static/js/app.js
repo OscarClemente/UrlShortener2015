@@ -8,17 +8,48 @@ $(document).ready(
                     url : "/link",
                     data : $(this).serialize(),
                     success : function(msg) {
-                        $("#result").html(
-                            "<div class='alert alert-success lead'><a target='_blank' href='"
-                            + msg.uri
-                            + "'>"
-                            + msg.uri
-                            + "</a></div>");
+						$("#sugerencia").html("");
+						if (msg.sponsor!=null) {
+							$("#result").html(
+								"<div class='alert alert-success lead'><a target='_blank' href='"
+								+ msg.uri
+								+ "'>"
+								+ msg.uri
+								+ "</a><br>Esta página tiene publicidad, se redigirá a "
+								+ msg.sponsor
+								+ " Durante 10 segundos</div>");
+								$("#result").click(
+									function(event) {
+										event.preventDefault();
+										var openedWindow;
+										setTimeout(function(){
+											openedWindow.location = msg.target;
+										}, 5000);
+										openedWindow = window.open(msg.sponsor);
+									}
+								);
+						}
+						else {
+							$("#result").html(
+								"<div class='alert alert-success lead'><a target='_blank' href='"
+								+ msg.uri
+								+ "'>"
+								+ msg.uri
+								+ "</a><br>Esta página no tiene publicidad </div>");
+						}
                     },
-                    error : function() {
-                        $("#result").html(
-                                "<div class='alert alert-danger lead'>ERROR</div>");
-                    },
+					error: function(xhr, status, error) {
+						//if (error=="Not Acceptable") {
+							var sep = xhr.responseText.split("separa");
+							$("#sugerencia").html("</br></br>"+sep[0]+"</br>"+sep[1]+"</br>"+error);
+							$("#result").html(
+								"<div class='alert alert-danger lead'>ERROR YA EXISTE ESE NOMBRE</div>");
+						//}
+						/*else {
+							$("#result").html(
+								"<div class='alert alert-danger lead'>ERROR BAD URL</div>");
+						}*/
+					},
                     crossDomain: true,
                     beforeSend: function(xhr) {
                     	var email_encrypted = sessionStorage.getItem('email');
@@ -29,14 +60,4 @@ $(document).ready(
                     }
                 });
             });
-        $("#result").click(
-    			function(event) {
-    				event.preventDefault();
-    				var openedWindow;
-    				openedWindow = window.open("http://chess-db.com/public/pinfo.jsp?id=2288230");
-    				setTimeout(function(){
-    					openedWindow.location = event.delegateTarget;
-    				}, 10000);
-    			}
-    		);
-    	});
+	});
