@@ -26,6 +26,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.google.common.hash.Hashing;
 
+import rita.RiWordNet;
+
+import org.json.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import urlshortener2015.common.domain.Click;
 import urlshortener2015.common.domain.ShortURL;
 import urlshortener2015.common.repository.ClickRepository;
@@ -79,12 +88,76 @@ public class UrlShortenerControllerWithLogs {
 	}
 
 	@RequestMapping(value = "/link", method = RequestMethod.POST)
-	public ResponseEntity<ShortURL> shortener(@RequestParam("url") String url,
+	public ResponseEntity<?> shortener(@RequestParam("url") String url,
 			@RequestParam(value = "sponsor", required = false) String sponsor,
 			@RequestParam(value = "brand", required = false) String brand,
 			@RequestParam(value = "urlName", required = false) String name,
 			HttpServletRequest request) {
 		logger.info("Requested new short for uri " + url);
+		sponsor = "http://github.com/UNIZAR-30246-WebEngineering";
+		if (name.equals("")) {
+			name = Hashing.murmur3_32()
+					.hashString(url, StandardCharsets.UTF_8).toString();
+			String nueva = "a";
+			while (shortURLRepository.findByKey(name)!=null) {
+				//seguir creando
+				name = Hashing.murmur3_32()
+					.hashString(url+""+nueva, StandardCharsets.UTF_8).toString();
+				nueva+="a";
+			}
+		}
+		if (shortURLRepository.findByKey(name)!=null) {
+			ArrayList<String> sufijos = new ArrayList<String>(); //contiene todos los sufijos
+			sufijos.add("ada");
+			sufijos.add("aco");
+			sufijos.add("ado");
+			JSONArray arr = new JSONArray();
+			JSONObject tmp;
+			try {
+			for (int i=0; i<sufijos.size(); i++) {
+				ShortURL l = shortURLRepository.findByKey(name+""+sufijos.get(i));
+				if (l==null) {
+					//No existe en la BD, luego no esta cogido
+					tmp = new JSONObject();
+					tmp.put("name",name+""+sufijos.get(i));
+					arr.put(tmp);
+				}
+			}		
+			} catch(Exception e){
+			//error handling
+			}
+			String devueltos = "'{\"nombres\":"+arr.toString()+"}'";
+
+			// Would pass in a PApplet normally, but we don't need to here
+			RiWordNet wordnet = new RiWordNet("C:\\Program Files (x86)\\WordNet\\2.1\\dict");
+
+			//Crea 10 sinonimos
+		    String[] poss = wordnet.getPos(name);
+		  /*  for (int j = 0; j < poss.length; j++) {
+		        System.out.println("\n\nSynonyms for " + name + " (pos: " + poss[j] + ")");*/
+		        String[] synonyms = wordnet.getAllSynonyms(name,poss[0],10);
+		        Arrays.sort(synonyms);
+				JSONArray sinonimos = new JSONArray();
+				JSONObject tmpo;
+							try {
+		        for (int i = 0; i < synonyms.length; i++) {
+					ShortURL l = shortURLRepository.findByKey(synonyms[i]);
+					if (l==null) {
+						//No existe en la BD, luego no esta cogido
+						tmpo = new JSONObject();
+						tmpo.put("sinonimo",synonyms[i]);
+						sinonimos.put(tmpo);
+					}
+		        }
+							} catch(Exception e){
+			//error handling
+			}
+		    //}
+			String synDevueltos = "'{\"synonyms\":"+sinonimos.toString()+"}'";
+			String respuesta = devueltos+"separa"+synDevueltos;
+			return new ResponseEntity<>(respuesta,HttpStatus.NOT_ACCEPTABLE);
+		}
+		else {
 		ShortURL su = createAndSaveIfValid(url, sponsor, brand, UUID
 				.randomUUID().toString(), extractIP(request), name);
 		if (su != null) {
@@ -93,6 +166,7 @@ public class UrlShortenerControllerWithLogs {
 			return new ResponseEntity<>(su, h, HttpStatus.CREATED);
 		} else {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
 		}
 	}
 	
