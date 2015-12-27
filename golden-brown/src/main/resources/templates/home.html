@@ -21,10 +21,11 @@
 </head>
 <body>
 	<div class="container-full">
-		<div class="row-header col-xs-offset-8 col-xs-4 text-center">
+		<div class="row row-header col-xs-offset-8 col-xs-4 text-center">
      		<button id="login" class="btn-info btn-md btn" th:ref="{@/login}" th:unless="${#authorization.expression('isAuthenticated()')}">Login</button>
      		<button id="register" class="btn-info btn-md btn" th:unless="${#authorization.expression('isAuthenticated()')}">Register</button>
-     		<a id="links" class="btn-info btn-md btn" th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{/links}">My links</a>
+     		<a id="users" class="btn-info btn-md btn" th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}" th:href="@{/users}">Users</a>
+     		<a id="links" class="btn-info btn-md btn" th:if="${#authorization.expression('hasRole(''ROLE_USER'')')}" th:href="@{/links}">My links</a>
      		<button id="user" class="btn-info btn-md btn" th:if="${#authorization.expression('isAuthenticated()')}">My account</button>
      		<form th:action="@{/logout}" method="post" style="display:inline;">
      			<button id="log_out" class="btn-info btn-md btn" th:if="${#authorization.expression('isAuthenticated()')}">Log out</button>

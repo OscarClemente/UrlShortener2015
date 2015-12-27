@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
-<title>Links</title>
+<title>Users</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link rel="stylesheet" type="text/css"
 	href="webjars/bootstrap/3.3.5/css/bootstrap.min.css" />
@@ -13,12 +13,12 @@
 <script type="text/javascript" src="js/username_session.js"></script>
 <script type="text/javascript" src="js/password_session.js"></script>
 <script type="text/javascript" src="js/modify.js"></script>
-<script type="text/javascript" src="js/list_links.js"></script>
+<script type="text/javascript" src="js/list_users.js"></script>
 <script type="text/javascript" src="js/jquery.dataTables.js"></script>
-<script type="text/javascript" src="js/delete_row.js"></script>
+<script type="text/javascript" src="js/delete_user.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
-	listLinks();
+	listUsers();
 });
 </script>
 <style>
@@ -41,23 +41,43 @@ $(document).ready(function() {
 		</div>
 		<div class="row">
 			<div class="col-xs-12 text-center">
-				<h1>My links</h1>
+				<h1>Users</h1>
 			</div>
 		</div>
 		<br></br>
-		<div class="row row-footer col-xs-offset-1">
-			<button id="delete-row" class="btn-warning btn-md btn">Delete row</button>
+		<div class="row row-footer">
+			<div class="col-xs-offset-1 col-xs-4" style="display:inline;">
+				<button id="delete-user" class="btn-warning btn-md btn">Delete links from user</button>
+			</div>
+			<div class="col-xs-offset-1 col-xs-5" style="display:inline;">
+				<button id="delete-link" class="btn-warning btn-md btn">Delete link selected</button>
+			</div>
 		</div>
 		<div class="row">
-			<div class="col-xs-offset-1 col-xs-10">
+			<div class="col-xs-offset-1 col-xs-4" style="display:inline;">
+				<table id="table-users" class="display table table-hover">
+				<thead>
+				<tr>
+				<th>Username</th>
+				<th>Nick</th>
+				</tr>
+				</thead>
+				<tbody>
+				</tbody>
+				<tfoot>
+				<tr>
+				<th>Username</th>
+				<th>Nick</th>
+				</tr>
+				</tfoot>
+				</table>
+			</div>
+			<div class="col-xs-offset-1 col-xs-5" style="display:inline;">
 				<table id="table-links" class="display table table-hover">
 				<thead>
 				<tr>
 				<th>Hash</th>
 				<th>Target</th>
-				<th>Sponsor</th>
-				<th>Mode</th>
-				<th>Safe</th>
 				<th>IP</th>
 				<th>Country</th>
 				</tr>
@@ -68,9 +88,6 @@ $(document).ready(function() {
 				<tr>
 				<th>Hash</th>
 				<th>Target</th>
-				<th>Sponsor</th>
-				<th>Mode</th>
-				<th>Safe</th>
 				<th>IP</th>
 				<th>Country</th>
 				</tr>

@@ -56,7 +56,7 @@ public class UrlShortenerControllerWithLogs {
 	@Autowired
 	protected UsuarioRepository usuarioRepository;
 
-	@RequestMapping(value = "/{name:(?!link|home|login).*}", method = RequestMethod.GET)
+	@RequestMapping(value = "/{name:(?!link|home|login|users).*}", method = RequestMethod.GET)
 	public ResponseEntity<?> redirectTo(@PathVariable String name,
 			HttpServletRequest request) {
 		logger.info("Requested redirection with hash " + name);
@@ -64,7 +64,8 @@ public class UrlShortenerControllerWithLogs {
 		if (l != null) {
 			createAndSaveClick(extractIP(request), name);
 			return createSuccessfulRedirectToResponse(l);
-		} else {
+		}
+		else {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 	}
@@ -217,7 +218,8 @@ public class UrlShortenerControllerWithLogs {
 		}
 		if (user != null) {
 			return new ResponseEntity<>(user, HttpStatus.ACCEPTED);
-		} else {
+		}
+		else {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
@@ -232,13 +234,14 @@ public class UrlShortenerControllerWithLogs {
 		}
 		if (user != null) {
 			return new ResponseEntity<>(user, HttpStatus.ACCEPTED);
-		} else {
+		}
+		else {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
 
 	@RequestMapping(value = "/listLinks", method = RequestMethod.POST)
-	public ResponseEntity<List<ShortURL>> update(
+	public ResponseEntity<List<ShortURL>> listLinks(
 			@RequestParam(value = "username") String username,
 			HttpServletRequest request) {
 		logger.info("Requested list of links from user with username "
@@ -249,7 +252,8 @@ public class UrlShortenerControllerWithLogs {
 		}
 		if (list != null) {
 			return new ResponseEntity<>(list, HttpStatus.ACCEPTED);
-		} else {
+		}
+		else {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
@@ -270,7 +274,45 @@ public class UrlShortenerControllerWithLogs {
 		}
 		if (accepted) {
 			return new ResponseEntity<>(accepted, HttpStatus.ACCEPTED);
-		} else {
+		}
+		else {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@RequestMapping(value = "/listUsers", method = RequestMethod.POST)
+	public ResponseEntity<List<Usuario>> listUsers(
+			@RequestParam(value = "username") String username,
+			HttpServletRequest request) {
+		logger.info("Requested list of users from admin with username "
+				+ username);
+		List<Usuario> list = null;
+		if (username != null && !username.equals("")) {
+			list = usuarioRepository.findUsers();
+		}
+		if (list != null) {
+			return new ResponseEntity<>(list, HttpStatus.ACCEPTED);
+		}
+		else {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@RequestMapping(value = "/deleteLinksUser", method = RequestMethod.POST)
+	public ResponseEntity<Boolean> deleteLinksUser(
+			@RequestParam(value = "username") String username,
+			HttpServletRequest request) {
+		logger.info("Requested deletion of links from user with username "
+				+ username);
+		boolean borrado = false;
+		if (username != null && !username.equals("")) {
+			shortURLRepositoryExtended.deleteByUsername(username);
+			borrado = true;
+		}
+		if (borrado) {
+			return new ResponseEntity<>(borrado, HttpStatus.ACCEPTED);
+		}
+		else {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}

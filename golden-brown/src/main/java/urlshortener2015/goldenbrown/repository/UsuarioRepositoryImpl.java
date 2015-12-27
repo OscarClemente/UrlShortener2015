@@ -2,6 +2,7 @@ package urlshortener2015.goldenbrown.repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,10 +91,20 @@ public class UsuarioRepositoryImpl implements UsuarioRepository {
 	@Override
 	public void delete(String username) {
 		try {
-			jdbc.update("DELETE FROM users WHERE username=?", username);
 			jdbc.update("DETELE FROM authorities WHERE username=?", username);
+			jdbc.update("DELETE FROM users WHERE username=?", username);
 		} catch (Exception e) {
 			log.debug("When delete for username " + username, e);
+		}
+	}
+	
+	@Override
+	public List<Usuario> findUsers() {
+		try {
+			return jdbc.query("SELECT * FROM users", rowMapper);
+		} catch (Exception e) {
+			log.debug("When select for all users", e);
+			return null;
 		}
 	}
 }

@@ -1,5 +1,7 @@
 package urlshortener2015.goldenbrown.repository;
 
+import java.util.List;
+
 import urlshortener2015.goldenbrown.domain.Usuario;
 
 public interface UsuarioRepository {
@@ -13,5 +15,7 @@ public interface UsuarioRepository {
 	void update(Usuario user);
 
 	void delete(String username);
+
+	List<Usuario> findUsers();
 
 }

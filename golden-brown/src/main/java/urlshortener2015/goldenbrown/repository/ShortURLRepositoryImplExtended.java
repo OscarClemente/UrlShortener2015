@@ -173,4 +173,13 @@ public class ShortURLRepositoryImplExtended implements ShortURLRepositoryExtende
 			log.debug("When delete for hash " + hash, e);
 		}
 	}
+	
+	@Override
+	public void deleteByUsername(String username) {
+		try {
+			jdbc.update("DELETE FROM shorturl WHERE username=?", username);
+		} catch (Exception e) {
+			log.debug("When delete for username " + username, e);
+		}
+	}
 }

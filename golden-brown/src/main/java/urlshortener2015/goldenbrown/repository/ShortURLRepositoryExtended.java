@@ -28,4 +28,6 @@ public interface ShortURLRepositoryExtended {
 
 	void deleteByHash(String username, String hash, String target);
 
+	void deleteByUsername(String username);
+
 }

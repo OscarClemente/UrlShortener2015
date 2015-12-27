@@ -8,7 +8,7 @@ function listLinks() {
         success : function(msg) {
             var oTable = $('#table-links').dataTable();
             for(var i = 0; i < msg.length; i++) {
-            	oTable.fnAddData([ msg[i].hash, msg[i].target, msg[i].sponsor, msg[i].owner, msg[i].mode, msg[i].safe,
+            	oTable.fnAddData([ msg[i].hash, msg[i].target, msg[i].sponsor, msg[i].mode, msg[i].safe,
             	                   msg[i].ip, msg[i].country ]);
             }
         },
