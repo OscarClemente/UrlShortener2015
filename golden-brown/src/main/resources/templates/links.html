@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<title>Links</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css"
+	href="webjars/bootstrap/3.3.5/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css"	href="css/jquery.dataTables.css" />
+<script type="text/javascript" src="webjars/jquery/2.1.4/jquery.min.js"></script>
+<script type="text/javascript" src="webjars/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="webjars/bootbox/4.4.0/bootbox.js"></script>
+<script type="text/javascript" src="js/username_session.js"></script>
+<script type="text/javascript" src="js/password_session.js"></script>
+<script type="text/javascript" src="js/modify.js"></script>
+<script type="text/javascript" src="js/list_links.js"></script>
+<script type="text/javascript" src="js/jquery.dataTables.js"></script>
+<script type="text/javascript" src="js/delete_row.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+	listLinks();
+});
+</script>
+<style>
+	.row-header {margin-top:10px;}
+	.row-footer {margin-bottom:10px;}
+</style>
+</head>
+<body>
+	<div class="container-full">
+		<div class="row-header col-xs-offset-8 col-xs-4 text-center">
+     		<button id="login" class="btn-info btn-md btn" th:ref="{@/login}" th:unless="${#authorization.expression('isAuthenticated()')}">Login</button>
+     		<button id="register" class="btn-info btn-md btn" th:unless="${#authorization.expression('isAuthenticated()')}">Register</button>
+     		<a id="home" class="btn-info btn-md btn" th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{/}">My shortener</a>
+     		<button id="user" class="btn-info btn-md btn" th:if="${#authorization.expression('isAuthenticated()')}">My account</button>
+     		<form th:action="@{/logout}" method="post" style="display:inline;">
+     			<button id="log_out" class="btn-info btn-md btn" th:if="${#authorization.expression('isAuthenticated()')}">Log out</button>
+			</form>
+            <div th:if="${param.error}">Invalid username and password.</div>
+        	<div th:if="${param.logout}">You have been logged out.</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12 text-center">
+				<h1>My links</h1>
+			</div>
+		</div>
+		<br></br>
+		<div class="row-footer col-xs-offset-1">
+			<button id="delete-row" class="btn-warning btn-md btn">Delete row</button>
+		</div>
+		<div class="row">
+			<div class="col-xs-offset-1 col-xs-10">
+				<table id="table-links" class="display table table-hover">
+				<thead>
+				<tr>
+				<th>Hash</th>
+				<th>Target</th>
+				<th>Sponsor</th>
+				<th>Owner</th>
+				<th>Mode</th>
+				<th>Safe</th>
+				<th>IP</th>
+				<th>Country</th>
+				</tr>
+				</thead>
+				<tbody>
+				</tbody>
+				<tfoot>
+				<tr>
+				<th>Hash</th>
+				<th>Target</th>
+				<th>Sponsor</th>
+				<th>Owner</th>
+				<th>Mode</th>
+				<th>Safe</th>
+				<th>IP</th>
+				<th>Country</th>
+				</tr>
+				</tfoot>
+				</table>
+			</div>
+		</div>
+	</div>
+    <div id="form-content-modify" class="form-content" style="display:none;">
+      <form id="my-modification" class="form" role="form">
+        <div class="form-group">
+          <label for="email">Email address</label>
+          <input type="email" class="form-control" id="email-modification" name="username" placeholder="Enter email" readonly="readonly" />
+        </div>
+        <div class="form-group">
+          <label for="email">Nick</label>
+          <input type="text" class="form-control" id="nick-modification" name="nick" placeholder="Enter nick" />
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" class="form-control" id="password-modification" name="password" placeholder="Password" />
+        </div>
+      </form>
+    </div>
+</body>
+</html>

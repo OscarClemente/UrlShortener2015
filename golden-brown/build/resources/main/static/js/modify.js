@@ -26,7 +26,7 @@ $(document).ready(
 			                      },
 			                      crossDomain: true,
 			                      beforeSend: function(xhr) {
-			                      	var email_encrypted = sessionStorage.getItem('email');
+			                    	  var email_encrypted = sessionStorage.getItem('email');
 			                          var email = $.parseJSON(email_encrypted);
 			                          var password_encrypted = sessionStorage.getItem('password');
 			                          var password = $.parseJSON(password_encrypted);

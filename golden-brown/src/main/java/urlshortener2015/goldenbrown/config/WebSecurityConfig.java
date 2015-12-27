@@ -21,11 +21,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		http
 			.csrf().disable()
 			.authorizeRequests()
-				.antMatchers("/", "/webjars/**", "/js/**").permitAll()
+				.antMatchers("/", "/webjars/**", "/css/**", "/js/**", "/images/**").permitAll()
 				.antMatchers(HttpMethod.POST, "/register").permitAll()
 				.antMatchers(HttpMethod.POST, "/link").authenticated()
 				.antMatchers(HttpMethod.POST, "/update").authenticated()
 				.antMatchers(HttpMethod.GET, "/dataUser").authenticated()
+				.antMatchers(HttpMethod.POST, "/listLinks").authenticated()
 				.anyRequest().authenticated()
 			.and()
 			.formLogin()

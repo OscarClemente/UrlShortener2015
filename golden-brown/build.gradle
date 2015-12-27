@@ -33,6 +33,9 @@ dependencies {
     compile 'org.webjars:jquery:2.1.4'
     compile 'org.webjars:bootbox:4.4.0'
     
+	compile 'org.json:json:20141113'
+	compile fileTree(include: ['*.jar'], dir: 'lib')
+    
     compile 'org.springframework.boot:spring-boot-starter-security'
     compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
     compile 'org.thymeleaf.extras:thymeleaf-extras-springsecurity3:2.1.1.RELEASE'

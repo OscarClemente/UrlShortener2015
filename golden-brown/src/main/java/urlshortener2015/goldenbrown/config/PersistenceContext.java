@@ -19,7 +19,7 @@ public class PersistenceContext {
     protected JdbcTemplate jdbc;
 	
 	@Bean
-	ShortURLRepositoryExtended shortURLRepository() {
+	ShortURLRepositoryExtended shortURLRepositoryExtended() {
 		return new ShortURLRepositoryImplExtended(jdbc);
 	}
  	
