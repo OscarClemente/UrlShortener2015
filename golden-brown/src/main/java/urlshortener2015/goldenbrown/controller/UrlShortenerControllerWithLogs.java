@@ -1,10 +1,11 @@
-package urlshortener2015.goldenbrown.web;
+package urlshortener2015.goldenbrown.controller;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.security.Principal;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,7 +21,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -55,10 +59,14 @@ public class UrlShortenerControllerWithLogs {
 
 	@Autowired
 	protected UsuarioRepository usuarioRepository;
+	
+    @Autowired
+    private SocialController socialController;
 
 	@RequestMapping(value = "/{name:(?!link|home|login|users).*}", method = RequestMethod.GET)
 	public ResponseEntity<?> redirectTo(@PathVariable String name,
-			HttpServletRequest request) {
+			HttpServletRequest request, Principal currentUser, Model model) {
+		socialController.setModel(request, currentUser, model);
 		logger.info("Requested redirection with hash " + name);
 		ShortURL l = shortURLRepositoryExtended.findByKey(name);
 		if (l != null) {
@@ -94,7 +102,7 @@ public class UrlShortenerControllerWithLogs {
 			@RequestParam(value = "brand", required = false) String brand,
 			@RequestParam(value = "urlName", required = false) String name,
 			@RequestParam("username") String username,
-			HttpServletRequest request) {
+			HttpServletRequest request, Principal currentUser, Model model) {
 		logger.info("Requested new short for uri " + url);
 		sponsor = "http://github.com/UNIZAR-30246-WebEngineering";
 		if (name.equals("")) {
@@ -165,7 +173,7 @@ public class UrlShortenerControllerWithLogs {
 		else {
 			ShortURL su = createAndSaveIfValid(url, sponsor, brand, UUID
 					.randomUUID().toString(), extractIP(request), name,
-					username);
+					username, currentUser, model);
 			if (su != null) {
 				HttpHeaders h = new HttpHeaders();
 				h.setLocation(su.getUri());
@@ -224,16 +232,17 @@ public class UrlShortenerControllerWithLogs {
 		}
 	}
 
-	@RequestMapping(value = "/dataUser", method = RequestMethod.GET)
-	public ResponseEntity<Usuario> dataUser(
-			@RequestParam(value = "username") String username) {
-		logger.info("Requested data from user with username " + username);
-		Usuario user = null;
+	@RequestMapping(value="/dataSocial", method = RequestMethod.GET)
+	public ResponseEntity<Usuario> dataSocial(HttpServletRequest request) {
+		logger.info("Requested current user logged");
+		User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		String username = user.getUsername();
+		Usuario usuario = null;
 		if (username != null && !username.equals("")) {
-			user = usuarioRepository.findByUsername(username);
+			usuario = usuarioRepository.findByUsername(username);
 		}
-		if (user != null) {
-			return new ResponseEntity<>(user, HttpStatus.ACCEPTED);
+		if (usuario != null) {
+			return new ResponseEntity<>(usuario, HttpStatus.ACCEPTED);
 		}
 		else {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -316,9 +325,10 @@ public class UrlShortenerControllerWithLogs {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
-
+	
 	protected ShortURL createAndSaveIfValid(String url, String sponsor,
-			String brand, String owner, String ip, String name, String username) {
+			String brand, String owner, String ip, String name, String username,
+			Principal currentUser, Model model) {
 		UrlValidator urlValidator = new UrlValidator(new String[] { "http",
 				"https" });
 		if (urlValidator.isValid(url)) {
@@ -326,7 +336,7 @@ public class UrlShortenerControllerWithLogs {
 			if (!name.equals("")) {
 				su = new ShortURL(name, url, linkTo(
 						methodOn(UrlShortenerControllerWithLogs.class)
-								.redirectTo(name, null)).toUri(), sponsor,
+								.redirectTo(name, null, currentUser, model)).toUri(), sponsor,
 						new Date(System.currentTimeMillis()), owner,
 						HttpStatus.TEMPORARY_REDIRECT.value(), true, ip, null,
 						username);

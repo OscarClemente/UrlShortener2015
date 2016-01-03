@@ -21,7 +21,6 @@ mainClassName = 'urlshortener2015.goldenbrown.Application'
 
 dependencies {
     compile 'org.json:json:20141113'
-    compile files('lib.rita.jar')
     compile fileTree(include: ['*.jar'], dir: 'lib')
     compile project(':common')
 
@@ -33,12 +32,15 @@ dependencies {
     compile 'org.webjars:jquery:2.1.4'
     compile 'org.webjars:bootbox:4.4.0'
     
-	compile 'org.json:json:20141113'
-	compile fileTree(include: ['*.jar'], dir: 'lib')
-    
     compile 'org.springframework.boot:spring-boot-starter-security'
     compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
     compile 'org.thymeleaf.extras:thymeleaf-extras-springsecurity3:2.1.1.RELEASE'
+    compile 'org.springframework.social:spring-social-security:1.1.0.RELEASE'
+    compile 'org.springframework.social:spring-social-config:1.1.0.RELEASE'
+    compile 'org.springframework.social:spring-social-facebook:1.1.0.RELEASE'
+    compile 'org.springframework.social:spring-social-twitter:1.1.0.RELEASE'
+    compile 'org.springframework.social:spring-social-google:1.0.0.RELEASE'
+    compile "org.apache.commons:commons-lang3:3.3.2"
 
     // Testing framework
     testCompile 'org.springframework.boot:spring-boot-starter-test'

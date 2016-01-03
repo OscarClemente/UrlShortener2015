@@ -11,6 +11,8 @@ import urlshortener2015.goldenbrown.repository.ShortURLRepositoryExtended;
 import urlshortener2015.goldenbrown.repository.ShortURLRepositoryImplExtended;
 import urlshortener2015.goldenbrown.repository.UsuarioRepository;
 import urlshortener2015.goldenbrown.repository.UsuarioRepositoryImpl;
+import urlshortener2015.goldenbrown.repository.UsuarioSocialRepository;
+import urlshortener2015.goldenbrown.repository.UsuarioSocialRepositoryImpl;
 
 @Configuration
 public class PersistenceContext {
@@ -31,5 +33,10 @@ public class PersistenceContext {
 	@Bean
 	UsuarioRepository usuarioRepository() {
 		return new UsuarioRepositoryImpl(jdbc);
+	}
+	
+	@Bean
+	UsuarioSocialRepository usuarioSocialRepository() {
+		return new UsuarioSocialRepositoryImpl(jdbc);
 	}
 }

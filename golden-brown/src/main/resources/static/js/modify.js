@@ -48,18 +48,17 @@ $(document).ready(
 	});
 
 function dataUser() {
-	var email_encrypted = sessionStorage.getItem('email');
-    var email = $.parseJSON(email_encrypted);
 	$("#user").on("click", function(event) {
 		$.ajax({
-		  type : "GET",
-            url : "/dataUser",
-            data: { username: email },
-            success : function(msg) {
-            	$('#email-modification', '.bootbox').val(msg.username);
+			type : "GET",
+			url : "/dataSocial",
+			success : function(msg) {
+	        	$('#email-modification', '.bootbox').val(msg.username);
 				$('#nick-modification', '.bootbox').val(msg.nick);
 				$('#password-modification', '.bootbox').val(msg.password);
-            }
-	  	});
+				sessionStorage.setItem('email', JSON.stringify(msg.username));
+				sessionStorage.setItem('password', JSON.stringify(msg.password));
+	        }
+		});
 	});
 }

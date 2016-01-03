@@ -1,4 +1,5 @@
 function listUsers() {
+	getDataUser();
 	var email_encrypted = sessionStorage.getItem('email');
     var email = $.parseJSON(email_encrypted);
     $.ajax({
