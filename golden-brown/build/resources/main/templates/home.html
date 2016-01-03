@@ -6,14 +6,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link rel="stylesheet" type="text/css"
 	href="webjars/bootstrap/3.3.5/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="css/bootstrap-social.css" />
+<link rel="stylesheet" type="text/css" href="css/font-awesome.css" />
 <script type="text/javascript" src="webjars/jquery/2.1.4/jquery.min.js"></script>
 <script type="text/javascript" src="webjars/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="webjars/bootbox/4.4.0/bootbox.js"></script>
 <script type="text/javascript" src="js/app.js"></script>
 <script type="text/javascript" src="js/register.js"></script>
 <script type="text/javascript" src="js/login.js"></script>
+<script type="text/javascript" src="js/log_out.js"></script>
 <script type="text/javascript" src="js/username_session.js"></script>
 <script type="text/javascript" src="js/password_session.js"></script>
+<script type="text/javascript" src="js/username_password_session.js"></script>
 <script type="text/javascript" src="js/modify.js"></script>
 <style>
 	.row-header {margin-top:10px;}
@@ -21,13 +25,11 @@
 </head>
 <body>
 	<div class="container-full">
-		<div class="row-header col-xs-offset-8 col-xs-4 text-center">
+		<div class="row row-header col-xs-offset-8 col-xs-4 text-center">
      		<button id="login" class="btn-info btn-md btn" th:ref="{@/login}" th:unless="${#authorization.expression('isAuthenticated()')}">Login</button>
      		<button id="register" class="btn-info btn-md btn" th:unless="${#authorization.expression('isAuthenticated()')}">Register</button>
-<<<<<<< HEAD
-     		<a id="links" class="btn-info btn-md btn" th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{/links}">My links</a>
-=======
->>>>>>> upstream/master
+     		<a id="users" class="btn-info btn-md btn" th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}" th:href="@{/users}">Users</a>
+     		<a id="links" class="btn-info btn-md btn" th:if="${#authorization.expression('hasRole(''ROLE_USER'')')}" th:href="@{/links}">My links</a>
      		<button id="user" class="btn-info btn-md btn" th:if="${#authorization.expression('isAuthenticated()')}">My account</button>
      		<form th:action="@{/logout}" method="post" style="display:inline;">
      			<button id="log_out" class="btn-info btn-md btn" th:if="${#authorization.expression('isAuthenticated()')}">Log out</button>
@@ -65,15 +67,11 @@
 			</div>
 		</div>
 	</div>
-<<<<<<< HEAD
 	<div class="row">
 		<div class="col-xs-offset-1 col-xs-10 text-center">
 			<div id="sugerencia"></div>
 		</div>
 	</div>
-=======
-	<div id="sugerencia"></div>
->>>>>>> upstream/master
 	<div id="form-content-register" class="form-content" style="display:none;">
       <form id="my-registry" class="form" role="form">
         <div class="form-group">
@@ -110,6 +108,12 @@
         </div>
         <div class="row-header">
 	        <button id="enter-button" class="btn btn-md btn-primary" type="submit">Enter</button>
+	        <a th:href="@{/auth/facebook}" class="ml btn btn-block btn-social btn-sm btn-facebook" style="display:inline;">
+	        <i class="fa fa-facebook"></i>Sign in with Facebook</a>
+	        <a th:href="@{/auth/twitter}" class="ml btn btn-block btn-social btn-sm btn-twitter" style="display:inline;">
+	        <i class="fa fa-twitter"></i>Sign in with Twitter</a>
+	        <a th:href="@{/auth/google(scope='profile')}" class="ml btn btn-block btn-social btn-sm btn-google-plus" style="display:inline;">
+	        <i class="fa fa-google-plus"></i>Sign in with Google+</a>
 	    </div>
       </form>
     </div>
