@@ -25,7 +25,8 @@ public class MultiplesURIsRepositoryImpl implements MultiplesURIsRepository {
 
 		@Override
 		public MultiplesURIs mapRow(ResultSet rs, int rowNum) throws SQLException {
-			return new MultiplesURIs(rs.getString("uri"), rs.getString("target"));
+			return new MultiplesURIs(rs.getString("uri"), rs.getString("target"),
+					rs.getString("username"));
 		}
 	};
 
@@ -53,8 +54,8 @@ public class MultiplesURIsRepositoryImpl implements MultiplesURIsRepository {
 	@Override
 	public MultiplesURIs save(MultiplesURIs su) {
 		try {
-			jdbc.update("INSERT INTO multiplesuris VALUES (?,?)",
-					su.getHash(), su.getTarget());
+			jdbc.update("INSERT INTO multiplesuris VALUES (?,?,?)",
+					su.getHash(), su.getTarget(), su.getUsername());
 		} catch (DuplicateKeyException e) {
 			log.debug("When insert for key " + su.getHash(), e);
 			return null;
@@ -69,8 +70,8 @@ public class MultiplesURIsRepositoryImpl implements MultiplesURIsRepository {
 	public void update(MultiplesURIs su) {
 		try {
 			jdbc.update(
-					"update MultiplesURIs set target=? where uri=?",
-					su.getTarget(), su.getHash());
+					"update MultiplesURIs set target=?, username=? where uri=?",
+					su.getTarget(), su.getUsername(), su.getHash());
 		} catch (Exception e) {
 			log.debug("When update for hash " + su.getHash(), e);
 		}

@@ -37,11 +37,11 @@ import rita.RiWordNet;
 import org.json.JSONObject;
 import org.json.JSONArray;
 
-import urlshortener2015.common.domain.Click;
-import urlshortener2015.common.repository.ClickRepository;
 import urlshortener2015.common.web.UrlShortenerController;
+import urlshortener2015.goldenbrown.domain.Click;
 import urlshortener2015.goldenbrown.domain.ShortURL;
 import urlshortener2015.goldenbrown.domain.Usuario;
+import urlshortener2015.goldenbrown.repository.ClickRepositoryExtended;
 import urlshortener2015.goldenbrown.repository.ShortURLRepositoryExtended;
 import urlshortener2015.goldenbrown.repository.UsuarioRepository;
 
@@ -55,7 +55,7 @@ public class UrlShortenerControllerWithLogs {
 	protected ShortURLRepositoryExtended shortURLRepositoryExtended;
 
 	@Autowired
-	protected ClickRepository clickRepository;
+	protected ClickRepositoryExtended clickRepositoryExtended;
 
 	@Autowired
 	protected UsuarioRepository usuarioRepository;
@@ -80,8 +80,8 @@ public class UrlShortenerControllerWithLogs {
 
 	protected void createAndSaveClick(String ip, String name) {
 		Click cl = new Click(null, name, new Date(System.currentTimeMillis()),
-				null, null, null, ip, null);
-		cl = clickRepository.save(cl);
+				null, null, null, ip, null, null);
+		cl = clickRepositoryExtended.save(cl);
 		logger.info(cl != null ? "[" + name + "] saved with id [" + cl.getId()
 				+ "]" : "[" + name + "] was not saved");
 	}
