@@ -66,7 +66,7 @@ public class UsuarioSocialRepositoryImpl implements UsuarioSocialRepository {
 	        			profile.getEmail() + ", " + profile.getFirstName() + ", " + profile.getLastName() + ", " +
 	            		profile.getName() + ", " + profile.getUsername());
 	        }
-	        jdbc.update("INSERT INTO users(username, nick, password, enabled) values (?,?,?,?)", userId, profile.getUsername(), RandomStringUtils.randomAlphanumeric(8), true);
+	        jdbc.update("INSERT INTO users(username, nick, password, enabled) values (?,?,?,?)", userId, profile.getFirstName(), RandomStringUtils.randomAlphanumeric(8), true);
 	        jdbc.update("INSERT INTO authorities(username, authority) values (?,?)", userId, "ROLE_USER");
 	        jdbc.update("INSERT INTO userprofile(userid, email, firstname, lastname, name, username) values (?,?,?,?,?,?)",
 	            userId, profile.getEmail(), profile.getFirstName(), profile.getLastName(), profile.getName(),
