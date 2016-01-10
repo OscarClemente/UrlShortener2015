@@ -141,7 +141,7 @@ public class UrlShortenerControllerWithLogs {
 			String devueltos = "'{\"names\":" + arr.toString() + "}'";
 
 			// Would pass in a PApplet normally, but we don't need to here
-			RiWordNet wordnet = new RiWordNet("C:\\Program Files (x86)\\WordNet\\2.1\\dict");
+			RiWordNet wordnet = new RiWordNet("dict");
 
 			// Crea 10 sinonimos
 			String[] poss = wordnet.getPos(name);

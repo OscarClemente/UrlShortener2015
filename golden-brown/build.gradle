@@ -37,7 +37,7 @@ dependencies {
     compile 'org.thymeleaf.extras:thymeleaf-extras-springsecurity3:2.1.1.RELEASE'
     compile 'org.springframework.social:spring-social-security:1.1.0.RELEASE'
     compile 'org.springframework.social:spring-social-config:1.1.0.RELEASE'
-    compile 'org.springframework.social:spring-social-facebook:1.1.0.RELEASE'
+    compile 'org.springframework.social:spring-social-facebook:2.0.3.RELEASE'
     compile 'org.springframework.social:spring-social-twitter:1.1.0.RELEASE'
     compile 'org.springframework.social:spring-social-google:1.0.0.RELEASE'
     compile "org.apache.commons:commons-lang3:3.3.2"
