@@ -34,7 +34,7 @@ import java.nio.charset.Charset;
 @DirtiesContext
 public class SystemTests {
 
-	@Value("${local.server.port}")
+	/*@Value("${local.server.port}")
 	private int port = 0;
 
 	@Test
@@ -87,7 +87,7 @@ public class SystemTests {
 		ResponseEntity<String> entity = new TestRestTemplate().postForEntity(
 				"http://localhost:" + this.port+"/link", parts, String.class);
 		return entity;
-	}
+	}*/
 
 
 
