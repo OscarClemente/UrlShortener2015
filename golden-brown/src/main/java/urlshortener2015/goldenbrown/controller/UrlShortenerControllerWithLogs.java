@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.google.common.hash.Hashing;
 
-import rita.RiWordNet;
+import rita.wordnet.RiWordnet;
 
 import org.json.JSONObject;
 import org.json.JSONArray;
@@ -140,8 +140,7 @@ public class UrlShortenerControllerWithLogs {
 			catch (Exception e) { }
 			String devueltos = "'{\"names\":" + arr.toString() + "}'";
 
-			// Would pass in a PApplet normally, but we don't need to here
-			RiWordNet wordnet = new RiWordNet("dict");
+			RiWordnet wordnet = new RiWordnet();
 
 			// Crea 10 sinonimos
 			String[] poss = wordnet.getPos(name);
@@ -160,7 +159,7 @@ public class UrlShortenerControllerWithLogs {
 					if (l == null) {
 						// No existe en la BD, luego no esta cogido
 						tmpo = new JSONObject();
-						tmpo.put("sinonimo", synonyms[i]);
+						tmpo.put("synonym", synonyms[i]);
 						sinonimos.put(tmpo);
 					}
 				}
