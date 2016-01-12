@@ -65,8 +65,7 @@ public class UrlShortenerControllerWithLogs {
 
 	@RequestMapping(value = "/{name:(?!link|home|login|users).*}", method = RequestMethod.GET)
 	public ResponseEntity<?> redirectTo(@PathVariable String name,
-			HttpServletRequest request, Principal currentUser, Model model) {
-		socialController.setModel(request, currentUser, model);
+			HttpServletRequest request) {
 		logger.info("Requested redirection with hash " + name);
 		ShortURL l = shortURLRepositoryExtended.findByKey(name);
 		if (l != null) {
@@ -171,8 +170,7 @@ public class UrlShortenerControllerWithLogs {
 		}
 		else {
 			ShortURL su = createAndSaveIfValid(url, sponsor, brand, UUID
-					.randomUUID().toString(), extractIP(request), name,
-					username, currentUser, model);
+					.randomUUID().toString(), extractIP(request), name,	username);
 			if (su != null) {
 				HttpHeaders h = new HttpHeaders();
 				h.setLocation(su.getUri());
@@ -326,8 +324,7 @@ public class UrlShortenerControllerWithLogs {
 	}
 	
 	protected ShortURL createAndSaveIfValid(String url, String sponsor,
-			String brand, String owner, String ip, String name, String username,
-			Principal currentUser, Model model) {
+			String brand, String owner, String ip, String name, String username) {
 		UrlValidator urlValidator = new UrlValidator(new String[] { "http",
 				"https" });
 		if (urlValidator.isValid(url)) {
@@ -335,7 +332,7 @@ public class UrlShortenerControllerWithLogs {
 			if (!name.equals("")) {
 				su = new ShortURL(name, url, linkTo(
 						methodOn(UrlShortenerControllerWithLogs.class)
-								.redirectTo(name, null, currentUser, model)).toUri(), sponsor,
+								.redirectTo(name, null)).toUri(), sponsor,
 						new Date(System.currentTimeMillis()), owner,
 						HttpStatus.TEMPORARY_REDIRECT.value(), true, ip, null,
 						username);
