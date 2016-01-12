@@ -43,6 +43,10 @@ public class ShortURL {
 	public String getTarget() {
 		return target;
 	}
+	
+	public void setTarget(String target) {
+		this.target = target;
+	}
 
 	public URI getUri() {
 		return uri;

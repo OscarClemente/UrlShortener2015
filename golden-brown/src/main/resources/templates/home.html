@@ -19,6 +19,7 @@
 <script type="text/javascript" src="js/password_session.js"></script>
 <script type="text/javascript" src="js/username_password_session.js"></script>
 <script type="text/javascript" src="js/modify.js"></script>
+<script type="text/javascript" src="js/rules.js"></script>
 <script type="text/javascript" src="js/sockjs-0.3.4.js"></script>
 <script type="text/javascript" src="js/stomp.js"></script>
 <script type="text/javascript" src="js/websocket.js"></script>
@@ -60,8 +61,60 @@
 					<br/>
 					<div class="input-group input-group-lg col-xs-offset-4 col-xs-4">
 						<input type="text" class="center-block form-control input-lg"
-							title="Enter a Name for the URL" placeholder="Enter a name for the URL" name="urlName"  id="name" onkeyup="sendName();"/>
+							title="Enter a Name for the URL" placeholder="Enter a name for the URL" name="urlName"/>
 						<span class="input-group-addon"><span class="glyphicon glyphicon-tag"></span></span>
+					</div>
+					<br/>
+					<div class="input-group input-group-lg col-xs-offset-4 col-xs-4">
+						<input type="text" class="center-block form-control input-lg"
+							title="Enter a new URL" placeholder="Enter a name for the conditional URL" name="ifurl1"/>
+					</div>
+					<br/>
+					<div class="input-group input-group-lg col-xs-offset-4 col-xs-4">
+						<input type="text" class="center-block form-control input-lg"
+							title="Enter a new expr" placeholder="Enter the conditional Expr" name="expr1"/>
+					</div>
+					<br/>
+					<button	id="change" class="btn btn-lg btn-primary">Change input method</button>
+
+					<div id="exprDiv">
+						<br/>
+						<div class="input-group input-group-lg col-xs-offset-4 col-xs-4">
+							<input type="text" class="center-block form-control input-lg"
+								title="Enter a new URL" placeholder="Enter a name for the conditional URL" name="ifurl2"/>
+						</div>
+						<br/>
+						<div class="input-group input-group-lg col-xs-offset-4 col-xs-4">
+							<input type="text" class="center-block form-control input-lg"
+								title="Enter a new expr" placeholder="Enter the conditional Expr" name="expr2"/>
+						</div>
+						<br/>
+						<div class="input-group input-group-lg col-xs-offset-4 col-xs-4">
+							<input type="text" class="center-block form-control input-lg"
+								title="Enter a new URL" placeholder="Enter a name for the conditional URL" name="ifurl3"/>
+						</div>
+						<br/>
+						<div class="input-group input-group-lg col-xs-offset-4 col-xs-4">
+							<input type="text" class="center-block form-control input-lg"
+								title="Enter a new expr" placeholder="Enter the conditional Expr" name="expr3"/>
+						</div>
+						<br/>
+						<div class="input-group input-group-lg col-xs-offset-4 col-xs-4">
+							<input type="text" class="center-block form-control input-lg"
+								title="Enter a new URL" placeholder="Enter a name for the conditional URL" name="ifurl4"/>
+						</div>
+						<br/>
+						<div class="input-group input-group-lg col-xs-offset-4 col-xs-4">
+							<input type="text" class="center-block form-control input-lg"
+								title="Enter a new expr" placeholder="Enter the conditional Expr" name="expr4"/>
+						</div>
+					</div>
+					<div id="ruleDiv" style="display:none;">
+						<br/>
+  						<div class="input-group input-group-lg col-xs-offset-4 col-xs-4">
+							<textarea class="center-block form-control input-lg"
+								title="Enter a new rule" placeholder="Enter the conditional rule" name="rule"/>
+						</div>
 					</div>
 				</form>
 				<p id="response"></p>

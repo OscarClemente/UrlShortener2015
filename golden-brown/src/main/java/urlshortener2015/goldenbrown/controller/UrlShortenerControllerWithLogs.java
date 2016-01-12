@@ -11,6 +11,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -25,6 +30,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -39,9 +45,11 @@ import org.json.JSONArray;
 
 import urlshortener2015.common.web.UrlShortenerController;
 import urlshortener2015.goldenbrown.domain.Click;
+import urlshortener2015.goldenbrown.domain.MultiplesURIs;
 import urlshortener2015.goldenbrown.domain.ShortURL;
 import urlshortener2015.goldenbrown.domain.Usuario;
 import urlshortener2015.goldenbrown.repository.ClickRepositoryExtended;
+import urlshortener2015.goldenbrown.repository.MultiplesURIsRepository;
 import urlshortener2015.goldenbrown.repository.ShortURLRepositoryExtended;
 import urlshortener2015.goldenbrown.repository.UsuarioRepository;
 
@@ -53,6 +61,9 @@ public class UrlShortenerControllerWithLogs {
 
 	@Autowired
 	protected ShortURLRepositoryExtended shortURLRepositoryExtended;
+	
+	@Autowired
+	protected MultiplesURIsRepository multiplesURIsRepository;
 
 	@Autowired
 	protected ClickRepositoryExtended clickRepositoryExtended;
@@ -70,6 +81,11 @@ public class UrlShortenerControllerWithLogs {
 		ShortURL l = shortURLRepositoryExtended.findByKey(name);
 		if (l != null) {
 			createAndSaveClick(extractIP(request), name);
+			
+			String username = l.getUsername();
+			String conditionalTarget = exprMatching(name, username, request);
+			if (conditionalTarget != null) l.setTarget(conditionalTarget);
+			
 			return createSuccessfulRedirectToResponse(l);
 		}
 		else {
@@ -101,6 +117,7 @@ public class UrlShortenerControllerWithLogs {
 			@RequestParam(value = "brand", required = false) String brand,
 			@RequestParam(value = "urlName", required = false) String name,
 			@RequestParam("username") String username,
+			@RequestParam MultiValueMap<String, String> params,
 			HttpServletRequest request, Principal currentUser, Model model) {
 		logger.info("Requested new short for uri " + url);
 		sponsor = "http://github.com/UNIZAR-30246-WebEngineering";
@@ -174,6 +191,9 @@ public class UrlShortenerControllerWithLogs {
 			if (su != null) {
 				HttpHeaders h = new HttpHeaders();
 				h.setLocation(su.getUri());
+				
+				saveConditionalURIs(name, username, params);
+				
 				return new ResponseEntity<>(su, h, HttpStatus.CREATED);
 			}
 			else {
@@ -352,5 +372,56 @@ public class UrlShortenerControllerWithLogs {
 		else {
 			return null;
 		}
+	}
+	
+	private String exprMatching(String hash, String username, HttpServletRequest request) {
+		List<MultiplesURIs> listmu = multiplesURIsRepository.listConditionals(hash, username);
+		if (listmu != null) {
+			logger.info("In expr Matching");
+					
+			for (int i = 0; i < listmu.size(); i++) {
+		    	Pattern exprReg = Pattern.compile(listmu.get(i).getExpression()); //"(.*)max:([0-9]*)"
+		    	Enumeration headerNames = request.getHeaderNames();
+		    	while (headerNames.hasMoreElements()) {
+		    		String key = (String) headerNames.nextElement();
+		    		String value = request.getHeader(key);
+			    	Matcher m = exprReg.matcher(value);
+			    	if(m.matches()){
+			    		logger.info("MATCH FOUND!!" + value + " - " + listmu.get(i).getExpression());
+			    		return listmu.get(i).getTarget();
+			    	}
+		    	}
+		    	logger.info("didnt find a match this iteration");
+			}
+			logger.info("match NOT found");
+		}
+		return null;
+		
+	}
+	
+	private void saveConditionalURIs(String hash, String username, MultiValueMap<String, String> params) {
+		
+		logger.info("Printing MultiValueMap params in next line");
+		logger.info(":" + params);
+		
+		String ifurl = "ifurl";
+		String expr = "expr";
+		
+		int paramn = 1;
+		
+		String firstparam = ifurl + paramn;
+		String secondparam = expr + paramn;
+		
+		while((params.getFirst(firstparam) != null && params.getFirst(secondparam) != null)
+				&& (!params.getFirst(firstparam).equals("") && !params.getFirst(secondparam).equals(""))) {
+			logger.info("Seeking url&expression -- " + firstparam + params.getFirst(firstparam) + secondparam + params.getFirst(secondparam));
+			MultiplesURIs mu = new MultiplesURIs(hash, username, params.getFirst(firstparam), params.getFirst(secondparam));
+			multiplesURIsRepository.save(mu);
+			
+			paramn++;
+			firstparam = ifurl + paramn; secondparam = expr + paramn;
+		}
+		
+		logger.info("Already cicled around " + paramn + " conditional params");
 	}
 }

@@ -7,6 +7,8 @@ import urlshortener2015.goldenbrown.domain.MultiplesURIs;
 public interface MultiplesURIsRepository {
 
 	MultiplesURIs findByKey(String id);
+	
+	MultiplesURIs findByHash(String hash, String username);
 
 	//List<MultiplesURIs> findByTarget(String target);
 
@@ -19,5 +21,7 @@ public interface MultiplesURIsRepository {
 	//Long count();
 
 	List<MultiplesURIs> list(Long limit, Long offset);
+	
+	List<MultiplesURIs> listConditionals(String hash, String username);
 
 }

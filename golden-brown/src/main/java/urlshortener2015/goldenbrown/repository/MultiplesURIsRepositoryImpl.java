@@ -2,6 +2,7 @@ package urlshortener2015.goldenbrown.repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -13,6 +14,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import urlshortener2015.goldenbrown.domain.MultiplesURIs;
+import urlshortener2015.goldenbrown.domain.ShortURL;
 
 
 @Repository
@@ -25,8 +27,8 @@ public class MultiplesURIsRepositoryImpl implements MultiplesURIsRepository {
 
 		@Override
 		public MultiplesURIs mapRow(ResultSet rs, int rowNum) throws SQLException {
-			return new MultiplesURIs(rs.getString("uri"), rs.getString("target"),
-					rs.getString("username"));
+			return new MultiplesURIs(rs.getString("hash"), rs.getString("username"),
+					rs.getString("target"), rs.getString("expression"));
 		}
 	};
 
@@ -50,12 +52,23 @@ public class MultiplesURIsRepositoryImpl implements MultiplesURIsRepository {
 			return null;
 		}
 	}
+	
+	@Override
+	public MultiplesURIs findByHash(String hash, String username) {
+		try {
+			return jdbc.queryForObject("SELECT * FROM MultiplesURIs WHERE hash=? AND username=?",
+					rowMapper, hash, username);
+		} catch (Exception e) {
+			log.debug("When select for hash " + hash, e);
+			return null;
+		}
+	}
 
 	@Override
 	public MultiplesURIs save(MultiplesURIs su) {
 		try {
-			jdbc.update("INSERT INTO multiplesuris VALUES (?,?,?)",
-					su.getHash(), su.getTarget(), su.getUsername());
+			jdbc.update("INSERT INTO multiplesuris VALUES (?,?,?,?)",
+					su.getHash(), su.getUsername(), su.getTarget(), su.getExpression());
 		} catch (DuplicateKeyException e) {
 			log.debug("When insert for key " + su.getHash(), e);
 			return null;
@@ -70,7 +83,7 @@ public class MultiplesURIsRepositoryImpl implements MultiplesURIsRepository {
 	public void update(MultiplesURIs su) {
 		try {
 			jdbc.update(
-					"update MultiplesURIs set target=?, username=? where uri=?",
+					"update MultiplesURIs set target=?, username=? where hash=?",
 					su.getTarget(), su.getUsername(), su.getHash());
 		} catch (Exception e) {
 			log.debug("When update for hash " + su.getHash(), e);
@@ -80,7 +93,7 @@ public class MultiplesURIsRepositoryImpl implements MultiplesURIsRepository {
 	@Override
 	public void delete(String hash) {
 		try {
-			jdbc.update("delete from MultiplesURIs where uri=?", hash);
+			jdbc.update("delete from MultiplesURIs where hash=?", hash);
 		} catch (Exception e) {
 			log.debug("When delete for hash " + hash, e);
 		}
@@ -103,6 +116,17 @@ public class MultiplesURIsRepositoryImpl implements MultiplesURIsRepository {
 			log.debug("When select for limit " + limit + " and offset "
 					+ offset, e);
 			return null;
+		}
+	}
+	
+	@Override
+	public List<MultiplesURIs> listConditionals(String hash, String username) {
+		try {
+			return jdbc.query("SELECT * FROM MultiplesURIs WHERE hash = ? AND username = ?",
+					new Object[] { hash, username }, rowMapper);
+		} catch (Exception e) {
+			log.debug("When select for target " + hash , e);
+			return Collections.emptyList();
 		}
 	}
 
