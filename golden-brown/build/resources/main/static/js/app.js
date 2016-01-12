@@ -45,7 +45,7 @@ $(document).ready(
 						if (xhr.status != 400) {
 							if (xhr.responseText.contains("separa")) {
 								var sep = xhr.responseText.split("separa");
-								$("#sugerencia").html("</br></br>"+sep[0]+"</br>"+sep[1]);
+								$("#sugerencia").html(sep[0]+"</br>"+sep[1]+"</br></br>");
 							}
 							else {
 								$("#result").html(

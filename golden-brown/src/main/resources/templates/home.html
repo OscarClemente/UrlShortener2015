@@ -27,7 +27,8 @@
 <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 
 <style>
-	.row-header {margin-top:10px;}
+	.row-header {margin-top:10px;}	
+	.row-footer {margin-bottom:10px;}
 </style>
 </head>
 <body onload="connect()">
@@ -61,77 +62,78 @@
 					<br/>
 					<div class="input-group input-group-lg col-xs-offset-4 col-xs-4">
 						<input type="text" class="center-block form-control input-lg"
-							title="Enter a Name for the URL" placeholder="Enter a name for the URL" name="urlName"/>
+							title="Enter a Name for the URL" placeholder="Enter a name for the URL" name="urlName" id="name" onkeyup="sendName();"/>
 						<span class="input-group-addon"><span class="glyphicon glyphicon-tag"></span></span>
 					</div>
-					<br/>
-					<div class="input-group input-group-lg col-xs-offset-4 col-xs-4">
-						<input type="text" class="center-block form-control input-lg"
-							title="Enter a new URL" placeholder="Enter a name for the conditional URL" name="ifurl1"/>
-					</div>
-					<br/>
-					<div class="input-group input-group-lg col-xs-offset-4 col-xs-4">
-						<input type="text" class="center-block form-control input-lg"
-							title="Enter a new expr" placeholder="Enter the conditional Expr" name="expr1"/>
-					</div>
-					<br/>
-					<button	id="change" class="btn btn-lg btn-primary">Change input method</button>
-
-					<div id="exprDiv">
-						<br/>
-						<div class="input-group input-group-lg col-xs-offset-4 col-xs-4">
-							<input type="text" class="center-block form-control input-lg"
-								title="Enter a new URL" placeholder="Enter a name for the conditional URL" name="ifurl2"/>
-						</div>
-						<br/>
-						<div class="input-group input-group-lg col-xs-offset-4 col-xs-4">
-							<input type="text" class="center-block form-control input-lg"
-								title="Enter a new expr" placeholder="Enter the conditional Expr" name="expr2"/>
-						</div>
-						<br/>
-						<div class="input-group input-group-lg col-xs-offset-4 col-xs-4">
-							<input type="text" class="center-block form-control input-lg"
-								title="Enter a new URL" placeholder="Enter a name for the conditional URL" name="ifurl3"/>
-						</div>
-						<br/>
-						<div class="input-group input-group-lg col-xs-offset-4 col-xs-4">
-							<input type="text" class="center-block form-control input-lg"
-								title="Enter a new expr" placeholder="Enter the conditional Expr" name="expr3"/>
-						</div>
-						<br/>
-						<div class="input-group input-group-lg col-xs-offset-4 col-xs-4">
-							<input type="text" class="center-block form-control input-lg"
-								title="Enter a new URL" placeholder="Enter a name for the conditional URL" name="ifurl4"/>
-						</div>
-						<br/>
-						<div class="input-group input-group-lg col-xs-offset-4 col-xs-4">
-							<input type="text" class="center-block form-control input-lg"
-								title="Enter a new expr" placeholder="Enter the conditional Expr" name="expr4"/>
-						</div>
-					</div>
-					<div id="ruleDiv" style="display:none;">
-						<br/>
-  						<div class="input-group input-group-lg col-xs-offset-4 col-xs-4">
-							<textarea class="center-block form-control input-lg"
-								title="Enter a new rule" placeholder="Enter the conditional rule" name="rule"/>
-						</div>
-					</div>
+					<p id="response"></p>
 				</form>
-				<p id="response"></p>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-xs-12 text-center">
 				<div class="col-xs-offset-4 col-xs-4 text-center">
-					<br />
 					<div id="result"></div>
 				</div>
 			</div>
 		</div>
 	</div>
-	<div class="row">
+	<div class="row row-header">
 		<div class="col-xs-offset-1 col-xs-10 text-center">
 			<div id="sugerencia"></div>
+		</div>
+	</div>
+	<div class="row row-header row-footer">
+		<div class="col-xs-12 text-center">
+			<div class="input-group input-group-lg col-xs-offset-4 col-xs-4">
+				<input type="text" class="center-block form-control input-lg"
+					title="Enter a new URL" placeholder="Enter a name for the conditional URL" name="ifurl1"/>
+			</div>
+			<br/>
+			<div class="input-group input-group-lg col-xs-offset-4 col-xs-4">
+				<input type="text" class="center-block form-control input-lg"
+					title="Enter a new expr" placeholder="Enter the conditional Expr" name="expr1"/>
+			</div>
+			<br/>
+			<button	id="change" class="btn btn-lg btn-primary">Change input method</button>
+			<div id="exprDiv">
+				<br/>
+				<div class="input-group input-group-lg col-xs-offset-4 col-xs-4">
+					<input type="text" class="center-block form-control input-lg"
+						title="Enter a new URL" placeholder="Enter a name for the conditional URL" name="ifurl2"/>
+				</div>
+				<br/>
+				<div class="input-group input-group-lg col-xs-offset-4 col-xs-4">
+					<input type="text" class="center-block form-control input-lg"
+						title="Enter a new expr" placeholder="Enter the conditional Expr" name="expr2"/>
+				</div>
+				<br/>
+				<div class="input-group input-group-lg col-xs-offset-4 col-xs-4">
+					<input type="text" class="center-block form-control input-lg"
+						title="Enter a new URL" placeholder="Enter a name for the conditional URL" name="ifurl3"/>
+				</div>
+				<br/>
+				<div class="input-group input-group-lg col-xs-offset-4 col-xs-4">
+					<input type="text" class="center-block form-control input-lg"
+						title="Enter a new expr" placeholder="Enter the conditional Expr" name="expr3"/>
+				</div>
+				<br/>
+				<div class="input-group input-group-lg col-xs-offset-4 col-xs-4">
+					<input type="text" class="center-block form-control input-lg"
+						title="Enter a new URL" placeholder="Enter a name for the conditional URL" name="ifurl4"/>
+				</div>
+				<br/>
+				<div class="input-group input-group-lg col-xs-offset-4 col-xs-4">
+					<input type="text" class="center-block form-control input-lg"
+						title="Enter a new expr" placeholder="Enter the conditional Expr" name="expr4"/>
+				</div>
+			</div>
+			<div id="ruleDiv" style="display:none;">
+				<br/>
+				<div class="input-group input-group-lg col-xs-offset-4 col-xs-4">
+					<textarea class="center-block form-control input-lg"
+						title="Enter a new rule" placeholder="Enter the conditional rule" name="rule"></textarea>
+				</div>
+			</div>
 		</div>
 	</div>
 	<div id="form-content-register" class="form-content" style="display:none;">

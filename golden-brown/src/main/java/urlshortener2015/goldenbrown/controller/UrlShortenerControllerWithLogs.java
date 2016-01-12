@@ -13,9 +13,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.Collections;
 import java.util.Enumeration;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -165,11 +163,11 @@ public class UrlShortenerControllerWithLogs {
 			 * System.out.println("\n\nSynonyms for " + name + " (pos: " +
 			 * poss[j] + ")");
 			 */
-			String[] synonyms = wordnet.getAllSynonyms(name, poss[0], 10);
-			Arrays.sort(synonyms);
 			JSONArray sinonimos = new JSONArray();
-			JSONObject tmpo;
 			try {
+				String[] synonyms = wordnet.getAllSynonyms(name, poss[0], 10);
+				Arrays.sort(synonyms);
+				JSONObject tmpo;
 				for (int i = 0; i < synonyms.length; i++) {
 					ShortURL l = shortURLRepositoryExtended.findByHash(synonyms[i], username);
 					if (l == null) {
