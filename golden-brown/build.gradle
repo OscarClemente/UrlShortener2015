@@ -23,6 +23,8 @@ dependencies {
     compile 'org.json:json:20141113'
     compile fileTree(include: ['*.jar'], dir: 'lib')
     compile project(':common')
+    compile 'org.springframework.boot:spring-boot-starter-websocket'
+    compile 'org.springframework:spring-messaging'
 
     // Provides the production database
     runtime 'org.hsqldb:hsqldb'
