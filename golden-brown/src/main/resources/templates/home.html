@@ -19,11 +19,19 @@
 <script type="text/javascript" src="js/password_session.js"></script>
 <script type="text/javascript" src="js/username_password_session.js"></script>
 <script type="text/javascript" src="js/modify.js"></script>
+<script type="text/javascript" src="js/sockjs-0.3.4.js"></script>
+<script type="text/javascript" src="js/stomp.js"></script>
+<script type="text/javascript" src="js/websocket.js"></script>
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
 <style>
 	.row-header {margin-top:10px;}
 </style>
 </head>
-<body>
+<body onload="connect()">
+<noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript! Websocket relies on Javascript being enabled. Please enable
+    Javascript and reload this page!</h2></noscript>
 	<div class="container-full">
 		<div class="row row-header col-xs-offset-8 col-xs-4 text-center">
      		<button id="login" class="btn-info btn-md btn" th:ref="{@/login}" th:unless="${#authorization.expression('isAuthenticated()')}">Login</button>
@@ -52,10 +60,11 @@
 					<br/>
 					<div class="input-group input-group-lg col-xs-offset-4 col-xs-4">
 						<input type="text" class="center-block form-control input-lg"
-							title="Enter a Name for the URL" placeholder="Enter a name for the URL" name="urlName"/>
+							title="Enter a Name for the URL" placeholder="Enter a name for the URL" name="urlName"  id="name" onkeyup="sendName();"/>
 						<span class="input-group-addon"><span class="glyphicon glyphicon-tag"></span></span>
 					</div>
 				</form>
+				<p id="response"></p>
 			</div>
 		</div>
 		<div class="row">
