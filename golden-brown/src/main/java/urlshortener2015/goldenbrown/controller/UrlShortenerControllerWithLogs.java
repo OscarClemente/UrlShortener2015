@@ -125,7 +125,49 @@ public class UrlShortenerControllerWithLogs {
 			HttpServletRequest request, Principal currentUser, Model model) {
 		logger.info("Requested new short for uri " + url);
 		sponsor = "http://localhost:8080/advert";
-		if (name.equals("")) {
+		
+		boolean useConditional = false;
+		//Comprobamos si se usan URIs condicionales
+		if(params.getFirst("ifurl1") != null && !params.getFirst("ifurl1").equals("")
+				&& params.getFirst("expr1") != null && !params.getFirst("expr1").equals("")){
+			useConditional = true;
+		}
+		
+		logger.info("Name (hash) is " + name);
+		//Si se usan URIs condicionales pero no hay url estandar,
+		//se crea un hash usando las targets de las condicionales
+		if (name.equals("") && url.equals("") && useConditional) {
+			logger.info("There are Conditional URIs but no default target" + name);
+			String ifurl = "ifurl";
+			String expr = "expr";
+			String nueva = "a";
+			
+			int paramn = 1;
+			
+			String firstparam = ifurl + paramn;
+			String secondparam = expr + paramn;
+			
+			while((params.getFirst(firstparam) != null && params.getFirst(secondparam) != null)
+					&& (!params.getFirst(firstparam).equals("") && !params.getFirst(secondparam).equals(""))) {
+				nueva += params.getFirst(firstparam);
+				
+				paramn++;
+				firstparam = ifurl + paramn; secondparam = expr + paramn;
+			}
+			
+			name = Hashing.murmur3_32().hashString(url + username + nueva, StandardCharsets.UTF_8)
+					.toString();
+			while (shortURLRepositoryExtended.findByHash(name, username) != null) {
+				// seguir creando
+				name = Hashing.murmur3_32()
+						.hashString(url + username + "" + nueva, StandardCharsets.UTF_8)
+						.toString();
+				nueva += "a";
+			}			
+		}	
+		
+		//Si no existe una hash (id or name) se crea una
+		else if (name.equals("")) {
 			name = Hashing.murmur3_32().hashString(url + username, StandardCharsets.UTF_8)
 					.toString();
 			String nueva = "a";
@@ -137,10 +179,13 @@ public class UrlShortenerControllerWithLogs {
 				nueva += "a";
 			}
 		}
+		logger.info("After name (hash) is " + name);
+		
 		boolean advert = false;
 		if (advertisement != null) {
 			advert = true;
 		}
+		
 		if (shortURLRepositoryExtended.findByHash(name, username) != null &&
 				url != null && !url.equals("")) {
 			ArrayList<String> sufijos = new ArrayList<String>(); // contiene todos los sufijos
@@ -195,7 +240,7 @@ public class UrlShortenerControllerWithLogs {
 		}
 		else {
 			ShortURL su = createAndSaveIfValid(url, sponsor, brand, UUID
-					.randomUUID().toString(), extractIP(request), name,	username, advert);
+					.randomUUID().toString(), extractIP(request), name,	username, advert, useConditional);
 			if (su != null) {
 				HttpHeaders h = new HttpHeaders();
 				h.setLocation(su.getUri());
@@ -352,10 +397,11 @@ public class UrlShortenerControllerWithLogs {
 	}
 	
 	protected ShortURL createAndSaveIfValid(String url, String sponsor,
-			String brand, String owner, String ip, String name, String username, boolean advert) {
+			String brand, String owner, String ip, String name, String username, 
+			boolean advert, boolean useConditional) {
 		UrlValidator urlValidator = new UrlValidator(new String[] { "http",
 				"https" });
-		if (urlValidator.isValid(url)) {
+		if (urlValidator.isValid(url) || (url.equals("") && useConditional)) {
 			ShortURL su = null;
 			if (!name.equals("")) {
 				su = new ShortURL(name, url, linkTo(

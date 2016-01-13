@@ -10,6 +10,5 @@ $(document).ready(function() {
             $('#expr4').val('');
             $('#rule').val('');
             $('#exprDiv').slideToggle("fast");  
-            $('#ruleDiv').slideToggle("fast");
     });
 });
