@@ -22,6 +22,7 @@ CREATE TABLE SHORTURL(
 	COUNTRY		VARCHAR(50),				-- Country
 	USERNAME	VARCHAR(45),				-- Username
 	ADVERT		BOOLEAN,					-- Advertisement
+	SECONDS		INTEGER,					-- Seconds
 	PRIMARY KEY (HASH)
 );
 

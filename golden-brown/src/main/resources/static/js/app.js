@@ -19,8 +19,7 @@ $(document).ready(
 								+ "'>"
 								+ msg.uri
 								+ "</a><br>Esta página tiene publicidad, se redirigirá a "
-								+ msg.sponsor
-								+ " Durante 10 segundos</div>");
+								+ msg.sponsor);
 						}
 						else {
 							$("#result").html(

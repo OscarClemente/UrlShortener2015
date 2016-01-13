@@ -109,8 +109,8 @@ public class UrlShortenerControllerWithLogs {
 			return new ResponseEntity<>(h, HttpStatus.valueOf(l.getMode()));
 		}
 		else {
-			h.setLocation(URI.create(l.getSponsor()));
-			return new ResponseEntity<>(l, h, HttpStatus.valueOf(l.getMode()));
+			h.setLocation(URI.create(l.getSponsor() + "?hash=" + l.getHash()));
+			return new ResponseEntity<>(h, HttpStatus.valueOf(l.getMode()));
 		}
 	}
 
@@ -121,6 +121,7 @@ public class UrlShortenerControllerWithLogs {
 			@RequestParam(value = "urlName", required = false) String name,
 			@RequestParam("username") String username,
 			@RequestParam(value = "advert", required = false) String advertisement,
+			@RequestParam(value = "max", required = false) String max,
 			@RequestParam MultiValueMap<String, String> params,
 			HttpServletRequest request, Principal currentUser, Model model) {
 		logger.info("Requested new short for uri " + url);
@@ -182,8 +183,15 @@ public class UrlShortenerControllerWithLogs {
 		logger.info("After name (hash) is " + name);
 		
 		boolean advert = false;
+		int seconds = 0;
 		if (advertisement != null) {
 			advert = true;
+			if (!max.equals("")) {
+				seconds = Integer.valueOf(max);
+				if (seconds < 1) {
+					seconds = 5;
+				}
+			}
 		}
 		
 		if (shortURLRepositoryExtended.findByHash(name, username) != null &&
@@ -240,7 +248,7 @@ public class UrlShortenerControllerWithLogs {
 		}
 		else {
 			ShortURL su = createAndSaveIfValid(url, sponsor, brand, UUID
-					.randomUUID().toString(), extractIP(request), name,	username, advert, useConditional);
+					.randomUUID().toString(), extractIP(request), name,	username, advert, seconds, useConditional);
 			if (su != null) {
 				HttpHeaders h = new HttpHeaders();
 				h.setLocation(su.getUri());
@@ -252,6 +260,23 @@ public class UrlShortenerControllerWithLogs {
 			else {
 				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 			}
+		}
+	}
+	
+	@RequestMapping(value = "/hash", method = RequestMethod.GET)
+	public ResponseEntity<ShortURL> hash(
+			@RequestParam(value = "hash") String hash,
+			HttpServletRequest request) {
+		logger.info("Requested shortURL from hash " + hash);
+		ShortURL shortURL = null;
+		if (hash != null && !hash.equals("")) {
+			shortURL = shortURLRepositoryExtended.findByKey(hash);
+		}
+		if (shortURL != null) {
+			return new ResponseEntity<>(shortURL, HttpStatus.CREATED);
+		}
+		else {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -398,7 +423,7 @@ public class UrlShortenerControllerWithLogs {
 	
 	protected ShortURL createAndSaveIfValid(String url, String sponsor,
 			String brand, String owner, String ip, String name, String username, 
-			boolean advert, boolean useConditional) {
+			boolean advert, int seconds, boolean useConditional) {
 		UrlValidator urlValidator = new UrlValidator(new String[] { "http",
 				"https" });
 		if (urlValidator.isValid(url) || (url.equals("") && useConditional)) {
@@ -409,7 +434,7 @@ public class UrlShortenerControllerWithLogs {
 								.redirectTo(name, null)).toUri(), sponsor,
 						new Date(System.currentTimeMillis()), owner,
 						HttpStatus.TEMPORARY_REDIRECT.value(), true, ip, null,
-						username, advert);
+						username, advert, seconds);
 			}
 			else {
 				String id = Hashing.murmur3_32()
@@ -419,7 +444,7 @@ public class UrlShortenerControllerWithLogs {
 								null)).toUri(), sponsor, new Date(
 						System.currentTimeMillis()), owner,
 						HttpStatus.TEMPORARY_REDIRECT.value(), true, ip, null,
-						username, advert);
+						username, advert, seconds);
 			}
 			return shortURLRepositoryExtended.save(su);
 		}
