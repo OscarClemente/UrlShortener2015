@@ -3,13 +3,11 @@ package urlshortener2015.goldenbrown.domain;
 public class MultiplesURIs {
 
 	private String hash;
-	private String username;
 	private String target;
 	private String expression;
 	
-	public MultiplesURIs(String hash, String username, String target, String expression) {
+	public MultiplesURIs(String hash, String target, String expression) {
 		this.hash = hash;
-		this.username = username;
 		this.target = target;
 		this.expression = expression;
 	}
@@ -28,14 +26,6 @@ public class MultiplesURIs {
 
 	public void setTarget(String target) {
 		this.target = target;
-	}
-	
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
 	}
 	
 	public String getExpression() {

@@ -14,8 +14,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import urlshortener2015.goldenbrown.domain.MultiplesURIs;
-import urlshortener2015.goldenbrown.domain.ShortURL;
-
 
 @Repository
 public class MultiplesURIsRepositoryImpl implements MultiplesURIsRepository {
@@ -27,8 +25,8 @@ public class MultiplesURIsRepositoryImpl implements MultiplesURIsRepository {
 
 		@Override
 		public MultiplesURIs mapRow(ResultSet rs, int rowNum) throws SQLException {
-			return new MultiplesURIs(rs.getString("hash"), rs.getString("username"),
-					rs.getString("target"), rs.getString("expression"));
+			return new MultiplesURIs(rs.getString("hash"), rs.getString("target"),
+					rs.getString("expression"));
 		}
 	};
 
@@ -67,8 +65,8 @@ public class MultiplesURIsRepositoryImpl implements MultiplesURIsRepository {
 	@Override
 	public MultiplesURIs save(MultiplesURIs su) {
 		try {
-			jdbc.update("INSERT INTO multiplesuris VALUES (?,?,?,?)",
-					su.getHash(), su.getUsername(), su.getTarget(), su.getExpression());
+			jdbc.update("INSERT INTO multiplesuris VALUES (?,?,?)",
+					su.getHash(), su.getTarget(), su.getExpression());
 		} catch (DuplicateKeyException e) {
 			log.debug("When insert for key " + su.getHash(), e);
 			return null;
@@ -83,8 +81,8 @@ public class MultiplesURIsRepositoryImpl implements MultiplesURIsRepository {
 	public void update(MultiplesURIs su) {
 		try {
 			jdbc.update(
-					"update MultiplesURIs set target=?, username=? where hash=?",
-					su.getTarget(), su.getUsername(), su.getHash());
+					"update MultiplesURIs set target=? where hash=?",
+					su.getTarget(), su.getHash());
 		} catch (Exception e) {
 			log.debug("When update for hash " + su.getHash(), e);
 		}
@@ -120,10 +118,10 @@ public class MultiplesURIsRepositoryImpl implements MultiplesURIsRepository {
 	}
 	
 	@Override
-	public List<MultiplesURIs> listConditionals(String hash, String username) {
+	public List<MultiplesURIs> listConditionals(String hash) {
 		try {
-			return jdbc.query("SELECT * FROM MultiplesURIs WHERE hash = ? AND username = ?",
-					new Object[] { hash, username }, rowMapper);
+			return jdbc.query("SELECT * FROM MultiplesURIs WHERE hash = ?",
+					new Object[] { hash }, rowMapper);
 		} catch (Exception e) {
 			log.debug("When select for target " + hash , e);
 			return Collections.emptyList();

@@ -35,7 +35,7 @@ public class ClickRepositoryImplExtended implements ClickRepositoryExtended {
 			return new Click(rs.getLong("id"), rs.getString("hash"),
 					rs.getDate("created"), rs.getString("referrer"),
 					rs.getString("browser"), rs.getString("platform"),
-					rs.getString("ip"), rs.getString("country"), rs.getString("username"));
+					rs.getString("ip"), rs.getString("country"));
 		}
 	};
 
@@ -50,10 +50,10 @@ public class ClickRepositoryImplExtended implements ClickRepositoryExtended {
 	}
 
 	@Override
-	public List<Click> findByHash(String hash, String username) {
+	public List<Click> findByHash(String hash) {
 		try {
-			return jdbc.query("SELECT * FROM click WHERE hash=? AND username=?",
-					new Object[] { hash, username }, rowMapper);
+			return jdbc.query("SELECT * FROM click WHERE hash=?",
+					new Object[] { hash }, rowMapper);
 		} catch (Exception e) {
 			log.debug("When select for hash " + hash, e);
 			return null;
@@ -71,7 +71,7 @@ public class ClickRepositoryImplExtended implements ClickRepositoryExtended {
 						throws SQLException {
 					PreparedStatement ps = conn
 							.prepareStatement(
-									"INSERT INTO CLICK VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+									"INSERT INTO CLICK VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
 									Statement.RETURN_GENERATED_KEYS);
 					ps.setNull(1, Types.BIGINT);
 					ps.setString(2, cl.getHash());
@@ -81,7 +81,6 @@ public class ClickRepositoryImplExtended implements ClickRepositoryExtended {
 					ps.setString(6, cl.getPlatform());
 					ps.setString(7, cl.getIp());
 					ps.setString(8, cl.getCountry());
-					ps.setString(9, cl.getUsername());
 					return ps;
 				}
 			}, holder);
@@ -102,10 +101,10 @@ public class ClickRepositoryImplExtended implements ClickRepositoryExtended {
 		log.info("ID2: "+cl.getId()+"navegador: "+cl.getBrowser()+" SO: "+cl.getPlatform()+" Date:"+cl.getCreated());
 		try {
 			jdbc.update(
-					"update click set hash=?, created=?, referrer=?, browser=?, platform=?, ip=?, country=?, username=? where id=?",
+					"update click set hash=?, created=?, referrer=?, browser=?, platform=?, ip=?, country=? where id=?",
 					cl.getHash(), cl.getCreated(), cl.getReferrer(),
 					cl.getBrowser(), cl.getPlatform(), cl.getIp(),
-					cl.getCountry(), cl.getId(), cl.getUsername());
+					cl.getCountry(), cl.getId());
 			
 		} catch (Exception e) {
 			log.info("When update for id " + cl.getId(), e);
@@ -154,10 +153,10 @@ public class ClickRepositoryImplExtended implements ClickRepositoryExtended {
 	}
 
 	@Override
-	public Long clicksByHash(String hash, String username) {
+	public Long clicksByHash(String hash) {
 		try {
 			return jdbc
-					.queryForObject("select count(*) from click where hash = ? AND username = ?", new Object[]{hash, username}, Long.class);
+					.queryForObject("select count(*) from click where hash = ? ", new Object[]{hash}, Long.class);
 		} catch (Exception e) {
 			log.debug("When counting hash "+hash, e);
 		}

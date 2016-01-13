@@ -12,10 +12,9 @@ public class Click {
 	private String platform;
 	private String ip;
 	private String country;
-	private String username;
 
 	public Click(Long id, String hash, Date created, String referrer,
-			String browser, String platform, String ip, String country, String username) {
+			String browser, String platform, String ip, String country) {
 		this.id = id;
 		this.hash = hash;
 		this.created = created;
@@ -24,7 +23,6 @@ public class Click {
 		this.platform = platform;
 		this.ip = ip;
 		this.country = country;
-		this.username = username;
 	}
 
 	public Long getId() {
@@ -57,9 +55,5 @@ public class Click {
 
 	public String getCountry() {
 		return country;
-	}
-	
-	public String getUsername() {
-		return username;
 	}
 }
