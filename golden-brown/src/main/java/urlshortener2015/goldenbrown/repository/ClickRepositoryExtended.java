@@ -6,9 +6,7 @@ import urlshortener2015.goldenbrown.domain.Click;
 
 public interface ClickRepositoryExtended {
 
-	List<Click> findByHash(String hash, String username);
-
-	Long clicksByHash(String hash, String username);
+	List<Click> findByHash(String hash);
 
 	Click save(Click cl);
 
@@ -21,4 +19,7 @@ public interface ClickRepositoryExtended {
 	Long count();
 
 	List<Click> list(Long limit, Long offset);
+
+	Long clicksByHash(String hash);
+
 }

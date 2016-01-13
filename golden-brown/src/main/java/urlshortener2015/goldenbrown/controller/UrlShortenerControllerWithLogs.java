@@ -72,7 +72,7 @@ public class UrlShortenerControllerWithLogs {
     @Autowired
     private SocialController socialController;
 
-	@RequestMapping(value = "/{name:(?!link|home|login|users).*}", method = RequestMethod.GET)
+	@RequestMapping(value = "/{name:(?!link|home|login|users|advert).*}", method = RequestMethod.GET)
 	public ResponseEntity<?> redirectTo(@PathVariable String name,
 			HttpServletRequest request) {
 		logger.info("Requested redirection with hash " + name);
@@ -80,8 +80,7 @@ public class UrlShortenerControllerWithLogs {
 		if (l != null) {
 			createAndSaveClick(extractIP(request), name);
 			
-			String username = l.getUsername();
-			String conditionalTarget = exprMatching(name, username, request);
+			String conditionalTarget = exprMatching(name, request);
 			if (conditionalTarget != null) l.setTarget(conditionalTarget);
 			
 			return createSuccessfulRedirectToResponse(l);
@@ -93,7 +92,7 @@ public class UrlShortenerControllerWithLogs {
 
 	protected void createAndSaveClick(String ip, String name) {
 		Click cl = new Click(null, name, new Date(System.currentTimeMillis()),
-				null, null, null, ip, null, null);
+				null, null, null, ip, null);
 		cl = clickRepositoryExtended.save(cl);
 		logger.info(cl != null ? "[" + name + "] saved with id [" + cl.getId()
 				+ "]" : "[" + name + "] was not saved");
@@ -105,8 +104,14 @@ public class UrlShortenerControllerWithLogs {
 
 	protected ResponseEntity<?> createSuccessfulRedirectToResponse(ShortURL l) {
 		HttpHeaders h = new HttpHeaders();
-		h.setLocation(URI.create(l.getTarget()));
-		return new ResponseEntity<>(h, HttpStatus.valueOf(l.getMode()));
+		if (!l.getAdvert()) {
+			h.setLocation(URI.create(l.getTarget()));
+			return new ResponseEntity<>(h, HttpStatus.valueOf(l.getMode()));
+		}
+		else {
+			h.setLocation(URI.create(l.getSponsor()));
+			return new ResponseEntity<>(l, h, HttpStatus.valueOf(l.getMode()));
+		}
 	}
 
 	@RequestMapping(value = "/link", method = RequestMethod.POST)
@@ -115,21 +120,26 @@ public class UrlShortenerControllerWithLogs {
 			@RequestParam(value = "brand", required = false) String brand,
 			@RequestParam(value = "urlName", required = false) String name,
 			@RequestParam("username") String username,
+			@RequestParam(value = "advert", required = false) String advertisement,
 			@RequestParam MultiValueMap<String, String> params,
 			HttpServletRequest request, Principal currentUser, Model model) {
 		logger.info("Requested new short for uri " + url);
-		sponsor = "http://github.com/UNIZAR-30246-WebEngineering";
+		sponsor = "http://localhost:8080/advert";
 		if (name.equals("")) {
-			name = Hashing.murmur3_32().hashString(url, StandardCharsets.UTF_8)
+			name = Hashing.murmur3_32().hashString(url + username, StandardCharsets.UTF_8)
 					.toString();
 			String nueva = "a";
 			while (shortURLRepositoryExtended.findByHash(name, username) != null) {
 				// seguir creando
 				name = Hashing.murmur3_32()
-						.hashString(url + "" + nueva, StandardCharsets.UTF_8)
+						.hashString(url + username + "" + nueva, StandardCharsets.UTF_8)
 						.toString();
 				nueva += "a";
 			}
+		}
+		boolean advert = false;
+		if (advertisement != null) {
+			advert = true;
 		}
 		if (shortURLRepositoryExtended.findByHash(name, username) != null &&
 				url != null && !url.equals("")) {
@@ -185,12 +195,12 @@ public class UrlShortenerControllerWithLogs {
 		}
 		else {
 			ShortURL su = createAndSaveIfValid(url, sponsor, brand, UUID
-					.randomUUID().toString(), extractIP(request), name,	username);
+					.randomUUID().toString(), extractIP(request), name,	username, advert);
 			if (su != null) {
 				HttpHeaders h = new HttpHeaders();
 				h.setLocation(su.getUri());
 				
-				saveConditionalURIs(name, username, params);
+				saveConditionalURIs(name, params);
 				
 				return new ResponseEntity<>(su, h, HttpStatus.CREATED);
 			}
@@ -342,7 +352,7 @@ public class UrlShortenerControllerWithLogs {
 	}
 	
 	protected ShortURL createAndSaveIfValid(String url, String sponsor,
-			String brand, String owner, String ip, String name, String username) {
+			String brand, String owner, String ip, String name, String username, boolean advert) {
 		UrlValidator urlValidator = new UrlValidator(new String[] { "http",
 				"https" });
 		if (urlValidator.isValid(url)) {
@@ -353,7 +363,7 @@ public class UrlShortenerControllerWithLogs {
 								.redirectTo(name, null)).toUri(), sponsor,
 						new Date(System.currentTimeMillis()), owner,
 						HttpStatus.TEMPORARY_REDIRECT.value(), true, ip, null,
-						username);
+						username, advert);
 			}
 			else {
 				String id = Hashing.murmur3_32()
@@ -363,7 +373,7 @@ public class UrlShortenerControllerWithLogs {
 								null)).toUri(), sponsor, new Date(
 						System.currentTimeMillis()), owner,
 						HttpStatus.TEMPORARY_REDIRECT.value(), true, ip, null,
-						username);
+						username, advert);
 			}
 			return shortURLRepositoryExtended.save(su);
 		}
@@ -372,8 +382,8 @@ public class UrlShortenerControllerWithLogs {
 		}
 	}
 	
-	private String exprMatching(String hash, String username, HttpServletRequest request) {
-		List<MultiplesURIs> listmu = multiplesURIsRepository.listConditionals(hash, username);
+	private String exprMatching(String hash, HttpServletRequest request) {
+		List<MultiplesURIs> listmu = multiplesURIsRepository.listConditionals(hash);
 		if (listmu != null) {
 			logger.info("In expr Matching");
 					
@@ -397,7 +407,7 @@ public class UrlShortenerControllerWithLogs {
 		
 	}
 	
-	private void saveConditionalURIs(String hash, String username, MultiValueMap<String, String> params) {
+	private void saveConditionalURIs(String hash, MultiValueMap<String, String> params) {
 		
 		logger.info("Printing MultiValueMap params in next line");
 		logger.info(":" + params);
@@ -413,7 +423,7 @@ public class UrlShortenerControllerWithLogs {
 		while((params.getFirst(firstparam) != null && params.getFirst(secondparam) != null)
 				&& (!params.getFirst(firstparam).equals("") && !params.getFirst(secondparam).equals(""))) {
 			logger.info("Seeking url&expression -- " + firstparam + params.getFirst(firstparam) + secondparam + params.getFirst(secondparam));
-			MultiplesURIs mu = new MultiplesURIs(hash, username, params.getFirst(firstparam), params.getFirst(secondparam));
+			MultiplesURIs mu = new MultiplesURIs(hash, params.getFirst(firstparam), params.getFirst(secondparam));
 			multiplesURIsRepository.save(mu);
 			
 			paramn++;

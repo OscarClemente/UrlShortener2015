@@ -12,7 +12,7 @@ $(document).ready(
                     data : $(this).serialize() + "&username=" + email,
                     success : function(msg) {
 						$("#sugerencia").html("");
-						if (msg.sponsor != null) {
+						if (msg.advert === true) {
 							$("#result").html(
 								"<div class='alert alert-success lead'><a target='_blank' href='"
 								+ msg.uri
@@ -21,16 +21,6 @@ $(document).ready(
 								+ "</a><br>Esta página tiene publicidad, se redirigirá a "
 								+ msg.sponsor
 								+ " Durante 10 segundos</div>");
-								$("#result").click(
-									function(event) {
-										event.preventDefault();
-										var openedWindow;
-										setTimeout(function(){
-											openedWindow.location = msg.target;
-										}, 5000);
-										openedWindow = window.open(msg.sponsor);
-									}
-								);
 						}
 						else {
 							$("#result").html(
@@ -47,10 +37,8 @@ $(document).ready(
 								var sep = xhr.responseText.split("separa");
 								$("#sugerencia").html(sep[0]+"</br>"+sep[1]+"</br></br>");
 							}
-							else {
-								$("#result").html(
+							$("#result").html(
 									"<div class='alert alert-danger lead'>ERROR NAME IS ALREADY IN USE</div>");
-							}
 						}
 						else {
 							$("#result").html(

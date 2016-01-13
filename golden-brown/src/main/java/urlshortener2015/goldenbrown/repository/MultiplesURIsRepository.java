@@ -21,7 +21,7 @@ public interface MultiplesURIsRepository {
 	//Long count();
 
 	List<MultiplesURIs> list(Long limit, Long offset);
-	
-	List<MultiplesURIs> listConditionals(String hash, String username);
+
+	List<MultiplesURIs> listConditionals(String hash);
 
 }
