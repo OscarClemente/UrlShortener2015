@@ -20,6 +20,7 @@
 <script type="text/javascript" src="js/username_password_session.js"></script>
 <script type="text/javascript" src="js/modify.js"></script>
 <script type="text/javascript" src="js/rules.js"></script>
+<script type="text/javascript" src="js/hash.js"></script>
 <script type="text/javascript" src="js/sockjs-0.3.4.js"></script>
 <script type="text/javascript" src="js/stomp.js"></script>
 <script type="text/javascript" src="js/websocket.js"></script>
@@ -65,7 +66,12 @@
 							title="Enter a Name for the URL" placeholder="Enter a name for the URL" name="urlName" id="name" onkeyup="sendName();"/>
 						<span class="input-group-addon"><span class="glyphicon glyphicon-tag"></span></span>
 					</div>
-					<div id="check" class="checkbox"><label><input name="advert" type="checkbox" value="yes"/>¿Advertisement?</label></div>
+					<div class="row-header row-footer col-xs-offset-4 col-xs-4">
+						<div id="check" class="checkbox col-xs-5" style="display:inline;"><label><input name="advert" type="checkbox" value="yes" onclick="handleClick(this)"/>¿Advertisement?</label></div>
+						<div id="time" class="col-xs-6" style="display:none;"><input type="number" onkeypress="return isNumberKey(event)" class="form-control" id="max" name="max"
+							placeholder="Seconds of advert"/></div>
+					</div>
+					<br/><br/><br/>
 					<p id="response"></p>
 
 					<br/>

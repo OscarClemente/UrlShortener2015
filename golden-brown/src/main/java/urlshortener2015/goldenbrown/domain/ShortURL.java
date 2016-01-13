@@ -17,10 +17,11 @@ public class ShortURL {
 	private String country;
 	private String username;
 	private boolean advert;
+	private int seconds;
 
 	public ShortURL(String hash, String target, URI uri, String sponsor,
 			Date created, String owner, Integer mode, Boolean safe, String ip,
-			String country, String username, boolean advert) {
+			String country, String username, boolean advert, int seconds) {
 		this.hash = hash;
 		this.target = target;
 		this.uri = uri;
@@ -33,6 +34,7 @@ public class ShortURL {
 		this.country = country;
 		this.username = username;
 		this.advert = advert;
+		this.seconds = seconds;
 	}
 
 	public ShortURL() {
@@ -88,6 +90,10 @@ public class ShortURL {
 	
 	public boolean getAdvert() {
 		return advert;
+	}
+	
+	public int getSeconds() {
+		return seconds;
 	}
 
 }
