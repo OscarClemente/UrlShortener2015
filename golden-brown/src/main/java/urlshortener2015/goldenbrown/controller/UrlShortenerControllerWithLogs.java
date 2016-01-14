@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.google.common.hash.Hashing;
 
@@ -80,7 +81,7 @@ public class UrlShortenerControllerWithLogs {
 		if (l != null) {
 			createAndSaveClick(extractIP(request), name);
 			
-			String conditionalTarget = exprMatching(name, request);
+			String conditionalTarget = exprMatching(name, request, l.getTarget());
 			if (conditionalTarget != null) l.setTarget(conditionalTarget);
 			
 			return createSuccessfulRedirectToResponse(l);
@@ -453,35 +454,33 @@ public class UrlShortenerControllerWithLogs {
 		}
 	}
 	
-	private String exprMatching(String hash, HttpServletRequest request) {
+	private String exprMatching(String hash, HttpServletRequest request, String target) {
 		List<MultiplesURIs> listmu = multiplesURIsRepository.listConditionals(hash);
 		if (listmu != null) {
 			logger.info("In expr Matching");
 					
 			for (int i = 0; i < listmu.size(); i++) {
 		    	Pattern exprReg = Pattern.compile(listmu.get(i).getExpression()); //"(.*)max:([0-9]*)"
-		    	Enumeration headerNames = request.getHeaderNames();
-		    	while (headerNames.hasMoreElements()) {
-		    		String key = (String) headerNames.nextElement();
-		    		String value = request.getHeader(key);
-			    	Matcher m = exprReg.matcher(value);
-			    	if(m.matches()){
-			    		logger.info("MATCH FOUND!!" + value + " - " + listmu.get(i).getExpression());
-			    		return listmu.get(i).getTarget();
-			    	}
+		    	String value = request.getHeader("user-agent");
+			    Matcher m = exprReg.matcher(value);
+			    if(m.matches()){
+			    	logger.info("MATCH FOUND!!" + value + " - " + listmu.get(i).getExpression());
+			    	return listmu.get(i).getTarget();
 		    	}
-		    	logger.info("didnt find a match this iteration");
 			}
 			logger.info("match NOT found");
+			if(target.equals("")){
+				throw new ResourceNotFoundException();
+			}
 		}
+		logger.info("This URI doesnt match any Conditional URIs");
 		return null;
 		
 	}
 	
 	private void saveConditionalURIs(String hash, MultiValueMap<String, String> params) {
 		
-		logger.info("Printing MultiValueMap params in next line");
-		logger.info(":" + params);
+		logger.info("Iterating through conditional params (if there are)");
 		
 		String ifurl = "ifurl";
 		String expr = "expr";
@@ -502,5 +501,9 @@ public class UrlShortenerControllerWithLogs {
 		}
 		
 		logger.info("Already cicled around " + paramn + " conditional params");
+	}
+	
+	@ResponseStatus(value = HttpStatus.NOT_FOUND)
+	public final class ResourceNotFoundException extends RuntimeException {
 	}
 }
