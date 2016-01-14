@@ -174,6 +174,7 @@ public class UrlShortenerControllerWithLogs {
 			name = Hashing.murmur3_32().hashString(url + username, StandardCharsets.UTF_8)
 					.toString();
 			String nueva = "a";
+			
 			while (shortURLRepositoryExtended.findByHash(name, username) != null) {
 				// seguir creando
 				name = Hashing.murmur3_32()
@@ -198,6 +199,7 @@ public class UrlShortenerControllerWithLogs {
 		
 		if (shortURLRepositoryExtended.findByHash(name, username) != null &&
 				url != null && !url.equals("")) {
+			logger.info("Entered if (existe otra igual)");
 			ArrayList<String> sufijos = new ArrayList<String>(); // contiene todos los sufijos
 			sufijos.add("ada");
 			sufijos.add("aco");
@@ -474,6 +476,7 @@ public class UrlShortenerControllerWithLogs {
 		    	Pattern exprReg = Pattern.compile(listmu.get(i).getExpression()); //"(.*)max:([0-9]*)"
 		    	String value = request.getHeader("user-agent");
 			    Matcher m = exprReg.matcher(value);
+			    logger.info("trying to match " + listmu.get(i).getExpression());
 			    if(m.matches()){
 			    	logger.info("MATCH FOUND!!" + value + " - " + listmu.get(i).getExpression());
 			    	return listmu.get(i).getTarget();
@@ -481,7 +484,7 @@ public class UrlShortenerControllerWithLogs {
 			}
 			logger.info("match NOT found");
 			if(target.equals("")){
-				throw new ResourceNotFoundException();
+				throw new BadRequestException();
 			}
 		}
 		logger.info("This URI doesnt match any Conditional URIs");
@@ -503,7 +506,7 @@ public class UrlShortenerControllerWithLogs {
 		
 		while((params.getFirst(firstparam) != null && params.getFirst(secondparam) != null)
 				&& (!params.getFirst(firstparam).equals("") && !params.getFirst(secondparam).equals(""))) {
-			logger.info("Seeking url&expression -- " + firstparam + params.getFirst(firstparam) + secondparam + params.getFirst(secondparam));
+			logger.info("Seeking url&expression -- " + hash + firstparam + params.getFirst(firstparam) + secondparam + params.getFirst(secondparam));
 			MultiplesURIs mu = new MultiplesURIs(hash, params.getFirst(firstparam), params.getFirst(secondparam));
 			multiplesURIsRepository.save(mu);
 			
@@ -514,7 +517,7 @@ public class UrlShortenerControllerWithLogs {
 		logger.info("Already cicled around " + paramn + " conditional params");
 	}
 	
-	@ResponseStatus(value = HttpStatus.NOT_FOUND)
-	public final class ResourceNotFoundException extends RuntimeException {
+	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+	public final class BadRequestException extends RuntimeException {
 	}
 }
