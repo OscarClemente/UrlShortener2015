@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.Enumeration;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -34,11 +33,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.client.RestTemplate;
 
 import com.google.common.hash.Hashing;
 
 import rita.wordnet.RiWordnet;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONArray;
 
@@ -429,12 +430,22 @@ public class UrlShortenerControllerWithLogs {
 				"https" });
 		if (urlValidator.isValid(url) || (url.equals("") && useConditional)) {
 			ShortURL su = null;
+			ResponseEntity<String> entity = new RestTemplate().getForEntity(
+					"http://ipinfo.io/" + ip + "/json", String.class);
+			String json = entity.getBody().toString();
+			String country = "";
+			try {
+				JSONObject obj = new JSONObject(json);
+				country = obj.getString("country");
+			}
+			catch(JSONException e) { }
+			
 			if (!name.equals("")) {
 				su = new ShortURL(name, url, linkTo(
 						methodOn(UrlShortenerControllerWithLogs.class)
 								.redirectTo(name, null)).toUri(), sponsor,
 						new Date(System.currentTimeMillis()), owner,
-						HttpStatus.TEMPORARY_REDIRECT.value(), true, ip, null,
+						HttpStatus.TEMPORARY_REDIRECT.value(), true, ip, country,
 						username, advert, seconds);
 			}
 			else {
@@ -444,7 +455,7 @@ public class UrlShortenerControllerWithLogs {
 						methodOn(UrlShortenerController.class).redirectTo(id,
 								null)).toUri(), sponsor, new Date(
 						System.currentTimeMillis()), owner,
-						HttpStatus.TEMPORARY_REDIRECT.value(), true, ip, null,
+						HttpStatus.TEMPORARY_REDIRECT.value(), true, ip, country,
 						username, advert, seconds);
 			}
 			return shortURLRepositoryExtended.save(su);
